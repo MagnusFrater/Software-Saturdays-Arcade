@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "29323717902",
+    "firebase_url": "https://software-saturdays-arcade.firebaseio.com",
+    "project_id": "software-saturdays-arcade",
+    "storage_bucket": "software-saturdays-arcade.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:29323717902:android:0a2abf45f6cf8735",
+        "android_client_info": {
+          "package_name": "com.softwaresaturdays.app.arcade"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "29323717902-6v1jv4a5378ri4t2i7rlddu1e9acd365.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.softwaresaturdays.app.arcade",
+            "certificate_hash": "0bea2e508d70dac1889c506590c6ae667749268d"
+          }
+        },
+        {
+          "client_id": "29323717902-ja0lnf82mmg2oljjba6f8tuimbfo660s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkVxWbqmpg874Ib6ATvFK4vsvXXemhoN0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "29323717902-ja0lnf82mmg2oljjba6f8tuimbfo660s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
