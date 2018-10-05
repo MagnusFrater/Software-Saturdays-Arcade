@@ -2,6 +2,8 @@ package com.softwaresaturdays.app.arcade.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -12,8 +14,15 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.softwaresaturdays.app.arcade.R;
+import com.softwaresaturdays.app.arcade.models.User;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -21,6 +30,9 @@ public class LoginActivity extends AppCompatActivity {
     public static final String TAG = "LOGIN_ACTIVITY";
     private GoogleSignInClient mGoogleSignInClient;
     private SignInButton mSignIn;
+
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,18 +89,41 @@ public class LoginActivity extends AppCompatActivity {
         try {
             // Signed in successfully
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-
-            // TODO Got user info, Create user object and update on Database
             Log.w(TAG, "SUCCESSFUL SIGN IN EMAIL: " + account.getEmail());
-
-
-            // User signed in, go to chat activity
-            startActivity(new Intent(getApplicationContext(), ChatActivity.class));
+            firebaseAuthWithGoogle(account);
 
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
         }
+    }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
+
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithCredential:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+
+                            // TODO Got user info, Create user object and update on Database
+                            User newUser = new User(user.getEmail(), user.getDisplayName(), user.getPhotoUrl(), user.getUid());
+                            // DatabaseHelper.updateUserInfo(newUser);
+
+                            // Ready to go to chat activity
+                            startActivity(new Intent(getApplicationContext(), ChatActivity.class));
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            Snackbar.make(findViewById(R.id.sign_in_button), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 }
