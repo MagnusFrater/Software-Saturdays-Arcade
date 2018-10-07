@@ -3,7 +3,7 @@ package com.softwaresaturdays.app.arcade.models;
 public class Message {
 
     private long timestamp;
-    private User author;
+    private String userId;
     private String type;
 
     public static String TYPE_TEXT_MESSAGE = "1";
@@ -12,9 +12,9 @@ public class Message {
 
     }
 
-    public Message(long timestamp, User author, String type) {
+    public Message(long timestamp, String userId, String type) {
         this.timestamp = timestamp;
-        this.author = author;
+        this.userId = userId;
         this.type = type;
     }
 
@@ -22,8 +22,8 @@ public class Message {
         return timestamp;
     }
 
-    public User getAuthor() {
-        return author;
+    public String getUserId() {
+        return userId;
     }
 
     public String getType() {

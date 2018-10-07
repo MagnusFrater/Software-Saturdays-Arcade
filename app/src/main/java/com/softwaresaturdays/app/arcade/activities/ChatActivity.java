@@ -81,7 +81,7 @@ public class ChatActivity extends AppCompatActivity {
                     Snackbar.make(mRvChat, "Please enter text", Snackbar.LENGTH_SHORT);
                 } else {
                     // Create new text message
-                    Message message = new TextMessage(text, MyApplication.currUser);
+                    Message message = new TextMessage(text, MyApplication.currUser.getUid());
                     // Upload message to database
                     DatabaseHelper.uploadMessage(message);
                 }

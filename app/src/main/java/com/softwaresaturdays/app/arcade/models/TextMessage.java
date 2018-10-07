@@ -7,8 +7,8 @@ public class TextMessage extends Message {
         super();
     }
 
-    public TextMessage(String text, User author) {
-        super(System.currentTimeMillis(), author, Message.TYPE_TEXT_MESSAGE);
+    public TextMessage(String text, String userId) {
+        super(System.currentTimeMillis(), userId, Message.TYPE_TEXT_MESSAGE);
         this.text = text;
     }
 

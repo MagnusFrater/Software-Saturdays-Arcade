@@ -49,8 +49,13 @@ public class DatabaseHelper {
                     ArrayList<Message> messages = new ArrayList<>();
                     for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
                         if (documentSnapshot.get("type").equals(Message.TYPE_TEXT_MESSAGE)) {
-                            TextMessage text = documentSnapshot.toObject(TextMessage.class);
-                            messages.add(text);
+                            try {
+                                TextMessage text = documentSnapshot.toObject(TextMessage.class);
+                                messages.add(text);
+                            } catch (Exception e2) {
+                                e2.printStackTrace();
+                            }
+
                         }
                     }
 
