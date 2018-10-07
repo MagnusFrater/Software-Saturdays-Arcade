@@ -8,6 +8,10 @@ public class User {
     private String photoUrl;
     private String uid;
 
+    public User() {
+
+    }
+
     public User(String email, String displayName, Uri photoUrl, String uid) {
         this.email = email;
         this.name = displayName;

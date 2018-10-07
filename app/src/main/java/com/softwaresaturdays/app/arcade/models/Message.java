@@ -8,6 +8,9 @@ public class Message {
 
     public static String TYPE_TEXT_MESSAGE = "1";
 
+    public Message() {
+
+    }
 
     public Message(long timestamp, User author, String type) {
         this.timestamp = timestamp;

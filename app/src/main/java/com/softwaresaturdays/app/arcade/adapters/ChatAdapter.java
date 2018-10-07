@@ -17,9 +17,9 @@ import java.util.ArrayList;
 public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private OnItemClickListener onItemClickListener;
     private Context mContext;
-    private ArrayList<TextMessage> messages;
+    private ArrayList<Message> messages;
 
-    public ChatAdapter(Context context, ArrayList<TextMessage> messages, OnItemClickListener listener) {
+    public ChatAdapter(Context context, ArrayList<Message> messages, OnItemClickListener listener) {
         this.mContext = context;
         this.messages = messages;
         this.onItemClickListener = listener;
