@@ -14,4 +14,20 @@ public class User {
         this.photoUrl = photoUrl.toString();
         this.uid = uid;
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public String getUid() {
+        return uid;
+    }
 }

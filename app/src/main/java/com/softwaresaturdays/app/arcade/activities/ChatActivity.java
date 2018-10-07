@@ -5,10 +5,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.makeramen.roundedimageview.RoundedImageView;
 import com.softwaresaturdays.app.arcade.MyApplication;
 import com.softwaresaturdays.app.arcade.R;
 import com.softwaresaturdays.app.arcade.adapters.ChatAdapter;
 import com.softwaresaturdays.app.arcade.models.TextMessage;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -27,6 +29,13 @@ public class ChatActivity extends AppCompatActivity {
         super.onStart();
 
         mRvChat = findViewById(R.id.rvChat);
+        RoundedImageView ivProfile = findViewById(R.id.ivProfile);
+
+        assert MyApplication.currUser != null;
+
+        // Load profile pic using Picasso
+        Picasso.get().load(MyApplication.currUser.getPhotoUrl()).into(ivProfile);
+
 
         ArrayList<TextMessage> messages = new ArrayList<>();
         messages.add(new TextMessage("first text", MyApplication.currUser));

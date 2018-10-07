@@ -67,6 +67,11 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
         } else {
+            // Assign global user object
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            User newUser = new User(user.getEmail(), user.getDisplayName(), user.getPhotoUrl(), user.getUid());
+            MyApplication.currUser = newUser;
+
             // User already signed in, go to chat activity
             startActivity(new Intent(getApplicationContext(), ChatActivity.class));
         }
