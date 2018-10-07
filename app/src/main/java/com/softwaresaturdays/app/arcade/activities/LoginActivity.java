@@ -21,6 +21,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.softwaresaturdays.app.arcade.MyApplication;
 import com.softwaresaturdays.app.arcade.R;
 import com.softwaresaturdays.app.arcade.models.User;
 
@@ -41,7 +42,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken("456216257726-rls29efgrvnd3hon2d8f7jpbcvjgsbut.apps.googleusercontent.com")
+                .requestIdToken("29323717902-ja0lnf82mmg2oljjba6f8tuimbfo660s.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
@@ -114,6 +115,8 @@ public class LoginActivity extends AppCompatActivity {
 
                             // TODO Got user info, Create user object and update on Database
                             User newUser = new User(user.getEmail(), user.getDisplayName(), user.getPhotoUrl(), user.getUid());
+                            MyApplication.currUser = newUser;
+
                             // DatabaseHelper.updateUserInfo(newUser);
 
                             // Ready to go to chat activity
