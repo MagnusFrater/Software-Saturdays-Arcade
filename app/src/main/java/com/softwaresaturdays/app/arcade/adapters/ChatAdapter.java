@@ -16,6 +16,7 @@ import com.softwaresaturdays.app.arcade.models.Message;
 import com.softwaresaturdays.app.arcade.models.TextMessage;
 import com.softwaresaturdays.app.arcade.models.User;
 import com.softwaresaturdays.app.arcade.networkHelpers.DatabaseHelper;
+import com.softwaresaturdays.app.arcade.utilities.Util;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -93,13 +94,21 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             // Fetch and show author's profile pic
             chatViewHolder.ivProfilePic.setVisibility(View.VISIBLE);
 
-            // TODO Change this so it's not calling for profile every time
+            chatViewHolder.ivProfilePic.setImageResource(R.drawable.ic_account_circle_black_36dp);
+
+            // TODO Store user info to avoid network calls for every message
             DatabaseHelper.getUserInfo(message.getUserId(), new DatabaseHelper.OnUserInfoFetchListener() {
                 @Override
-                public void onUserInfoFetched(User user) {
-                    Picasso.get().load(user.getPhotoUrl()).placeholder(R.drawable.).into(chatViewHolder.ivProfilePic);
+                public void onUserInfoFetched(User author) {
+                    Picasso.get().load(author.getPhotoUrl()).placeholder(R.drawable.ic_account_circle_black_36dp).into(chatViewHolder.ivProfilePic);
+                }
+
+                @Override
+                public void onAllUsersInfoFetched(ArrayList<User> allUsers) {
+
                 }
             });
+
 
             // Change color of card view to white
             chatViewHolder.cvMessage.setCardBackgroundColor(mContext.getResources().getColor(R.color.colorGrey));
