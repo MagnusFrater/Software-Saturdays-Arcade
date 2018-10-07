@@ -24,6 +24,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.softwaresaturdays.app.arcade.MyApplication;
 import com.softwaresaturdays.app.arcade.R;
 import com.softwaresaturdays.app.arcade.models.User;
+import com.softwaresaturdays.app.arcade.networkHelpers.DatabaseHelper;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -68,9 +69,7 @@ public class LoginActivity extends AppCompatActivity {
             });
         } else {
             // Assign global user object
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            User newUser = new User(user.getEmail(), user.getDisplayName(), user.getPhotoUrl(), user.getUid());
-            MyApplication.currUser = newUser;
+            updateUserInfo(mAuth.getCurrentUser());
 
             // User already signed in, go to chat activity
             startActivity(new Intent(getApplicationContext(), ChatActivity.class));
@@ -116,13 +115,8 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
 
-                            // TODO Got user info, Create user object and update on Database
-                            User newUser = new User(user.getEmail(), user.getDisplayName(), user.getPhotoUrl(), user.getUid());
-                            MyApplication.currUser = newUser;
-
-                            // DatabaseHelper.updateUserInfo(newUser);
+                            updateUserInfo(mAuth.getCurrentUser());
 
                             // Ready to go to chat activity
                             startActivity(new Intent(getApplicationContext(), ChatActivity.class));
@@ -133,5 +127,14 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    private void updateUserInfo(FirebaseUser user) {
+        assert user != null;
+
+        User newUser = new User(user.getEmail(), user.getDisplayName(), user.getPhotoUrl(), user.getUid());
+        MyApplication.currUser = newUser;
+        // Add user info on Database
+        DatabaseHelper.uploadUserInfo(newUser);
     }
 }
