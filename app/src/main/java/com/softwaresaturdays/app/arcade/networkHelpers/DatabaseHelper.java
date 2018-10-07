@@ -2,7 +2,9 @@ package com.softwaresaturdays.app.arcade.networkHelpers;
 
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -68,7 +70,28 @@ public class DatabaseHelper {
         });
     }
 
+    public static void getUserInfo(String userId, final OnUserInfoFetchListener listener) {
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        final DocumentReference docRef = db.collection("users").document(userId);
+
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                try {
+                    User user = documentSnapshot.toObject(User.class);
+                    listener.onUserInfoFetched(user);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
     public interface OnDatabaseFetchListener {
         void onMessagesFetched(ArrayList<Message> messages);
+    }
+
+    public interface OnUserInfoFetchListener {
+        void onUserInfoFetched(User user);
     }
 }
