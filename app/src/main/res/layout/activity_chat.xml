@@ -34,17 +34,26 @@
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rvGames"
                     android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    android:padding="8dp"
                     app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
 
-                <TextView
-                    android:id="@+id/tvLeaderboard"
+                <RelativeLayout
+                    android:id="@+id/rlGameInfo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:padding="16dp"
-                    android:text="LEADERBOARD: NOUKNJKNKNK" />
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tvLeaderboard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="16dp"
+                        android:text="LEADERBOARD: NOUKNJKNKNK" />
+
+                </RelativeLayout>
 
             </LinearLayout>
 

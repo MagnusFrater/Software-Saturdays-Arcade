@@ -66,6 +66,13 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             chatViewHolder.tvTextMessage.setText(textMessage.getText());
         }
 
+        chatViewHolder.cvMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onItemClickListener.onClick(message);
+            }
+        });
+
         // If the message is created by the user
         if (message.getUserId() != null && message.getUserId().equals(MyApplication.currUser.getUid())) {
 
