@@ -92,7 +92,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             // programmatically align card view left in the view
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             params.removeRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            params.setMargins(8, 8, 8, 8);  // left, top, right, bottom
+            params.setMargins(8, 26, 8, 8);  // left, top, right, bottom
             params.addRule(RelativeLayout.RIGHT_OF, chatViewHolder.ivProfilePic.getId()); // align card right of profile pic
             chatViewHolder.cvMessage.setLayoutParams(params);
 
