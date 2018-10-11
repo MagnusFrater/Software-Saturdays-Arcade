@@ -5,7 +5,8 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="4dp"
     android:layout_marginRight="4dp"
-    android:layout_marginBottom="4dp">
+    android:layout_marginBottom="4dp"
+    android:padding="4dp">
 
     <com.makeramen.roundedimageview.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/ivProfileInMessage"
@@ -14,7 +15,7 @@
         android:layout_margin="8dp"
         app:riv_border_color="@android:color/transparent"
         app:riv_border_width="0dp"
-        app:riv_corner_radius="16dp"
+        app:riv_corner_radius="18dp"
         app:riv_mutate_background="true"
         app:riv_oval="false" />
 
@@ -22,28 +23,28 @@
         android:id="@+id/cvMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="54dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
+        android:layout_toEndOf="@+id/ivProfileInMessage"
+        android:layout_toRightOf="@id/ivProfileInMessage"
         android:foreground="?attr/selectableItemBackground"
-        android:padding="16dp"
         app:cardCornerRadius="18dp"
         app:cardElevation="0dp"
-        app:cardPreventCornerOverlap="true">
+        app:cardPreventCornerOverlap="true"
+        app:contentPadding="8dp">
 
         <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/tvTextMessage"
+                android:layout_marginTop="4dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:layout_marginTop="4dp"
                 android:text="TEXT MESSAGE" />
-
 
         </RelativeLayout>
 

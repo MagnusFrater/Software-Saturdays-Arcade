@@ -16,7 +16,6 @@ import com.softwaresaturdays.app.arcade.models.Message;
 import com.softwaresaturdays.app.arcade.models.TextMessage;
 import com.softwaresaturdays.app.arcade.models.User;
 import com.softwaresaturdays.app.arcade.networkHelpers.DatabaseHelper;
-import com.softwaresaturdays.app.arcade.utilities.Util;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -84,17 +83,18 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             // Change text color to white
             chatViewHolder.tvTextMessage.setTextColor(mContext.getResources().getColor(R.color.colorWhite));
         } else {
-
-            // programmatically align it left in the view
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-            params.setMargins(140, 8, 8, 8);  // left, top, right, bottom
-            chatViewHolder.cvMessage.setLayoutParams(params);
+            // If the message was created by other users
 
             // Fetch and show author's profile pic
             chatViewHolder.ivProfilePic.setVisibility(View.VISIBLE);
-
             chatViewHolder.ivProfilePic.setImageResource(R.drawable.ic_account_circle_black_36dp);
+
+            // programmatically align card view left in the view
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.removeRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            params.setMargins(8, 8, 8, 8);  // left, top, right, bottom
+            params.addRule(RelativeLayout.RIGHT_OF, chatViewHolder.ivProfilePic.getId()); // align card right of profile pic
+            chatViewHolder.cvMessage.setLayoutParams(params);
 
             // TODO Store user info to avoid network calls for every message
             DatabaseHelper.getUserInfo(message.getUserId(), new DatabaseHelper.OnUserInfoFetchListener() {

@@ -5,6 +5,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -52,6 +53,9 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        final Toolbar mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
 
         mRvChat = findViewById(R.id.rvChat);
         ImageView ivSend = findViewById(R.id.ivSend);
