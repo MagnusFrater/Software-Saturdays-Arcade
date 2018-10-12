@@ -6,6 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -21,6 +24,7 @@ import com.softwaresaturdays.app.arcade.models.Game;
 import com.softwaresaturdays.app.arcade.models.Message;
 import com.softwaresaturdays.app.arcade.models.TextMessage;
 import com.softwaresaturdays.app.arcade.networkHelpers.DatabaseHelper;
+import com.softwaresaturdays.app.arcade.networkHelpers.NetworkHelper;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -95,6 +99,30 @@ public class ChatActivity extends AppCompatActivity {
                     DatabaseHelper.uploadMessage(message);
                 }
                 etTextMessage.setText("");
+            }
+        });
+
+        etTextMessage.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 2)
+                    NetworkHelper.fetchGIF(s.toString(), ChatActivity.this, new NetworkHelper.OnFetchSuccessListener() {
+                        @Override
+                        public void onFetchedGifUrl(String gifUrl) {
+                            // Got the url
+                            Log.d("CHAT ACTIVITY", "URL for GIF: " + gifUrl);
+                        }
+                    });
             }
         });
 
