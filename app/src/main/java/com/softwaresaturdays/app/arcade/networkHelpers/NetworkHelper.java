@@ -60,7 +60,9 @@ public class NetworkHelper {
                     new InputStreamReader(responseBody, "UTF-8"));
 
             JsonObject gif = jsonObject.getAsJsonObject("data");
-            String gifUrl = gif.get("url").getAsString();
+            JsonObject images = gif.getAsJsonObject("images");
+
+            String gifUrl = images.getAsJsonObject("fixed_height").getAsJsonPrimitive("url").getAsString();
 
             listener.onFetchedGifUrl(gifUrl);
         } catch (Exception e) {

@@ -10,6 +10,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.softwaresaturdays.app.arcade.models.GifMessage;
 import com.softwaresaturdays.app.arcade.models.Message;
 import com.softwaresaturdays.app.arcade.models.TextMessage;
 import com.softwaresaturdays.app.arcade.models.User;
@@ -57,7 +58,13 @@ public class DatabaseHelper {
                             } catch (Exception e2) {
                                 e2.printStackTrace();
                             }
-
+                        } else if (documentSnapshot.get("type").equals(Message.TYPE_GIF_MESSAGE)) {
+                            try {
+                                GifMessage gif = documentSnapshot.toObject(GifMessage.class);
+                                messages.add(gif);
+                            } catch (Exception e2) {
+                                e2.printStackTrace();
+                            }
                         }
                     }
 
@@ -124,6 +131,7 @@ public class DatabaseHelper {
 
     public interface OnUserInfoFetchListener {
         void onUserInfoFetched(User user);
+
         void onAllUsersInfoFetched(ArrayList<User> allUsers);
     }
 }

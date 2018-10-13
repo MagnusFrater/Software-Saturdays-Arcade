@@ -15,17 +15,18 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.softwaresaturdays.app.arcade.MyApplication;
 import com.softwaresaturdays.app.arcade.R;
 import com.softwaresaturdays.app.arcade.adapters.ChatAdapter;
 import com.softwaresaturdays.app.arcade.adapters.GameAdapter;
 import com.softwaresaturdays.app.arcade.models.Game;
+import com.softwaresaturdays.app.arcade.models.GifMessage;
 import com.softwaresaturdays.app.arcade.models.Message;
 import com.softwaresaturdays.app.arcade.models.TextMessage;
 import com.softwaresaturdays.app.arcade.networkHelpers.DatabaseHelper;
 import com.softwaresaturdays.app.arcade.networkHelpers.NetworkHelper;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -39,6 +40,8 @@ public class ChatActivity extends AppCompatActivity {
     private GameAdapter mGameAdapter;
     private RelativeLayout mRlGameInfo;
     private TextView mTvLeaderboard;
+    private boolean mIsGifButton;
+    private RoundedImageView mIvProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +61,7 @@ public class ChatActivity extends AppCompatActivity {
                 });
                 if (mRvChat != null) {
                     mRvChat.setAdapter(mChatAdapter);
+                    mRvChat.scrollToPosition(mMessages.size() - 1);
                 }
             }
         });
@@ -75,13 +79,15 @@ public class ChatActivity extends AppCompatActivity {
         mRlGameInfo = findViewById(R.id.rlGameInfo);
         mTvLeaderboard = findViewById(R.id.tvLeaderboard);
         ImageView ivSend = findViewById(R.id.ivSend);
-        RoundedImageView ivProfile = findViewById(R.id.ivProfile);
+        mIvProfile = findViewById(R.id.ivProfile);
         final EditText etTextMessage = findViewById(R.id.etTextMessage);
 
         assert MyApplication.currUser != null;
 
-        // Load profile pic using Picasso
-        Picasso.get().load(MyApplication.currUser.getPhotoUrl()).into(ivProfile);
+        mIvProfile.setImageResource(R.drawable.gif);
+
+        // Load profile pic using Glide
+        Glide.with(this).load(MyApplication.currUser.getPhotoUrl()).into(mIvProfile);
 
         // Game info only visible when clicked on a game
         mRlGameInfo.setVisibility(View.GONE);
@@ -94,7 +100,7 @@ public class ChatActivity extends AppCompatActivity {
                     Snackbar.make(mRvChat, "Please enter text", Snackbar.LENGTH_SHORT).show();
                 } else {
                     // Create new text message
-                    Message message = new TextMessage(text, MyApplication.currUser.getUid());
+                    Message message = new TextMessage(text);
                     // Upload message to database
                     DatabaseHelper.uploadMessage(message);
                 }
@@ -115,14 +121,37 @@ public class ChatActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (s.length() > 2)
-                    NetworkHelper.fetchGIF(s.toString(), ChatActivity.this, new NetworkHelper.OnFetchSuccessListener() {
+                if (s.length() > 2) {
+                    Glide.with(ChatActivity.this).load(R.drawable.gif).into(mIvProfile);
+                    mIsGifButton = true;
+                } else {
+                    mIsGifButton = false;
+                    // Load profile pic using Glide
+                    Glide.with(ChatActivity.this).load(MyApplication.currUser.getPhotoUrl()).into(mIvProfile);
+                }
+            }
+        });
+
+        mIvProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mIsGifButton) {
+                    NetworkHelper.fetchGIF(etTextMessage.getText().toString(), ChatActivity.this, new NetworkHelper.OnFetchSuccessListener() {
                         @Override
                         public void onFetchedGifUrl(String gifUrl) {
                             // Got the url
                             Log.d("CHAT ACTIVITY", "URL for GIF: " + gifUrl);
+
+                            if (gifUrl != null && !gifUrl.isEmpty()) {
+                                // Create a new GIF message
+                                Message message = new GifMessage(gifUrl);
+                                // Upload GIF message to database
+                                DatabaseHelper.uploadMessage(message);
+                            }
                         }
                     });
+                    etTextMessage.setText("");
+                }
             }
         });
 
@@ -177,5 +206,6 @@ public class ChatActivity extends AppCompatActivity {
 
         mRvChat.setAdapter(mChatAdapter);
         mRvChat.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        mRvChat.scrollToPosition(mMessages.size() - 1);
     }
 }

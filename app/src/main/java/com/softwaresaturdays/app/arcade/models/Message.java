@@ -7,6 +7,7 @@ public class Message {
     private String type;
 
     public static String TYPE_TEXT_MESSAGE = "1";
+    public static String TYPE_GIF_MESSAGE = "2";
 
     public Message() {
 

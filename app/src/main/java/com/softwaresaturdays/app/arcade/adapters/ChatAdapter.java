@@ -6,17 +6,20 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.softwaresaturdays.app.arcade.MyApplication;
 import com.softwaresaturdays.app.arcade.R;
+import com.softwaresaturdays.app.arcade.models.GifMessage;
 import com.softwaresaturdays.app.arcade.models.Message;
 import com.softwaresaturdays.app.arcade.models.TextMessage;
 import com.softwaresaturdays.app.arcade.models.User;
 import com.softwaresaturdays.app.arcade.networkHelpers.DatabaseHelper;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -34,6 +37,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     class ChatViewHolder extends RecyclerView.ViewHolder {
         private TextView tvTextMessage;
+        private ImageView ivGif;
         private CardView cvMessage;
         private RoundedImageView ivProfilePic;
 
@@ -42,6 +46,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             tvTextMessage = itemView.findViewById(R.id.tvTextMessage);
             cvMessage = itemView.findViewById(R.id.cvMessage);
             ivProfilePic = itemView.findViewById(R.id.ivProfileInMessage);
+            ivGif = itemView.findViewById(R.id.ivGif);
         }
     }
 
@@ -64,6 +69,20 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if (message.getType().equals(Message.TYPE_TEXT_MESSAGE)) {
             TextMessage textMessage = (TextMessage) message;
             chatViewHolder.tvTextMessage.setText(textMessage.getText());
+            chatViewHolder.tvTextMessage.setVisibility(View.VISIBLE);
+            chatViewHolder.ivGif.setVisibility(View.GONE);
+        } else if (message.getType().equals(Message.TYPE_GIF_MESSAGE)) {
+            GifMessage gifMessage = (GifMessage) message;
+            chatViewHolder.ivGif.setVisibility(View.VISIBLE);
+            chatViewHolder.tvTextMessage.setVisibility(View.GONE);
+            RequestOptions requestOptions = new RequestOptions();
+            requestOptions.placeholder(R.drawable.progress);
+            requestOptions.error(R.drawable.progress);
+
+            Glide.with(chatViewHolder.ivGif)
+                    .setDefaultRequestOptions(requestOptions)
+                    .load(gifMessage.getUrl())
+                    .into(chatViewHolder.ivGif);
         }
 
         chatViewHolder.cvMessage.setOnClickListener(new View.OnClickListener() {
@@ -107,7 +126,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             DatabaseHelper.getUserInfo(message.getUserId(), new DatabaseHelper.OnUserInfoFetchListener() {
                 @Override
                 public void onUserInfoFetched(User author) {
-                    Picasso.get().load(author.getPhotoUrl()).placeholder(R.drawable.ic_account_circle_black_36dp).into(chatViewHolder.ivProfilePic);
+                    Glide.with(mContext).load(author.getPhotoUrl()).into(chatViewHolder.ivProfilePic);
                 }
 
                 @Override
