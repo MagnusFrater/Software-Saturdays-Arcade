@@ -49,6 +49,7 @@ public class LoginActivity extends AppCompatActivity {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         mSignIn = findViewById(R.id.sign_in_button);
+        mSignIn.setSize(SignInButton.SIZE_WIDE);
     }
 
     @Override

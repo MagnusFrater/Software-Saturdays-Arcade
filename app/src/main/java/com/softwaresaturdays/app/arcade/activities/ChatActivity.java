@@ -3,6 +3,7 @@ package com.softwaresaturdays.app.arcade.activities;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -27,6 +28,7 @@ import com.softwaresaturdays.app.arcade.models.Message;
 import com.softwaresaturdays.app.arcade.models.TextMessage;
 import com.softwaresaturdays.app.arcade.networkHelpers.DatabaseHelper;
 import com.softwaresaturdays.app.arcade.networkHelpers.NetworkHelper;
+import com.softwaresaturdays.app.arcade.utilities.Util;
 
 import java.util.ArrayList;
 
@@ -42,6 +44,7 @@ public class ChatActivity extends AppCompatActivity {
     private TextView mTvLeaderboard;
     private boolean mIsGifButton;
     private RoundedImageView mIvProfile;
+    private Game mSelectedGame;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +84,7 @@ public class ChatActivity extends AppCompatActivity {
         ImageView ivSend = findViewById(R.id.ivSend);
         mIvProfile = findViewById(R.id.ivProfile);
         final EditText etTextMessage = findViewById(R.id.etTextMessage);
+        CardView cvPlayButton = findViewById(R.id.cvPlayButton);
 
         assert MyApplication.currUser != null;
 
@@ -91,6 +95,16 @@ public class ChatActivity extends AppCompatActivity {
 
         // Game info only visible when clicked on a game
         mRlGameInfo.setVisibility(View.GONE);
+
+
+        cvPlayButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mSelectedGame != null) {
+                    Snackbar.make(mRvChat, mSelectedGame.getTitle() + " is Under construction", Snackbar.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         ivSend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,6 +162,9 @@ public class ChatActivity extends AppCompatActivity {
                                 // Upload GIF message to database
                                 DatabaseHelper.uploadMessage(message);
                             }
+
+                            Util.hideKeyboard(ChatActivity.this);
+                            mRvChat.scrollToPosition(mMessages.size() - 1);
                         }
                     });
                     etTextMessage.setText("");
@@ -173,7 +190,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick(Game game) {
                 // Clicked on Game
-                Snackbar.make(mRvChat, "Under construction", Snackbar.LENGTH_SHORT).show();
+                mSelectedGame = game;
 
                 if (mRlGameInfo.getVisibility() == View.GONE) {
                     fetchAndShowGameInfo(game);

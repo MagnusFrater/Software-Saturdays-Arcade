@@ -28,8 +28,9 @@
                 android:id="@+id/tvGameTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:alpha="0.5"
                 android:text="2048"
-                android:textColor="@color/colorWhite"
+                android:textColor="@color/colorBlack"
                 android:textSize="18sp" />
 
         </RelativeLayout>
