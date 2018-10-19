@@ -45,13 +45,15 @@ public class ChatActivity extends AppCompatActivity {
     private boolean mIsGifButton;
     private RoundedImageView mIvProfile;
     private Game mSelectedGame;
+    private int mLimit = 12;
+    private LinearLayoutManager mLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        DatabaseHelper.fetchMessages(new DatabaseHelper.OnDatabaseFetchListener() {
+        DatabaseHelper.fetchMessages(mLimit, new DatabaseHelper.OnDatabaseFetchListener() {
             @Override
             public void onMessagesFetched(ArrayList<Message> messages) {
                 // Update messages REAL-TIME and update list view
@@ -65,6 +67,26 @@ public class ChatActivity extends AppCompatActivity {
                 if (mRvChat != null) {
                     mRvChat.setAdapter(mChatAdapter);
                     mRvChat.scrollToPosition(mMessages.size() - 1);
+                }
+            }
+        });
+    }
+
+    void refreshChatList() {
+        mLimit += 12;
+        DatabaseHelper.fetchMessages(mLimit, new DatabaseHelper.OnDatabaseFetchListener() {
+            @Override
+            public void onMessagesFetched(ArrayList<Message> messages) {
+                // Update messages REAL-TIME and update list view
+                mMessages = messages;
+                mChatAdapter = new ChatAdapter(ChatActivity.this, mMessages, new ChatAdapter.OnItemClickListener() {
+                    @Override
+                    public void onClick(Message message) {
+                        // Clicked on message
+                    }
+                });
+                if (mRvChat != null) {
+                    mRvChat.setAdapter(mChatAdapter);
                 }
             }
         });
@@ -221,8 +243,20 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+        mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+
         mRvChat.setAdapter(mChatAdapter);
-        mRvChat.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        mRvChat.setLayoutManager(mLayoutManager);
         mRvChat.scrollToPosition(mMessages.size() - 1);
+
+//        mRvChat.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+//                super.onScrolled(recyclerView, dx, dy);
+//                if (mLayoutManager.findFirstCompletelyVisibleItemPosition() == 1) {
+//                    //refreshChatList();
+//                }
+//            }
+//        });
     }
 }

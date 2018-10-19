@@ -19,7 +19,7 @@ import com.softwaresaturdays.app.arcade.models.GifMessage;
 import com.softwaresaturdays.app.arcade.models.Message;
 import com.softwaresaturdays.app.arcade.models.TextMessage;
 import com.softwaresaturdays.app.arcade.models.User;
-import com.softwaresaturdays.app.arcade.networkHelpers.DatabaseHelper;
+import com.softwaresaturdays.app.arcade.utilities.Util;
 
 import java.util.ArrayList;
 
@@ -37,6 +37,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     class ChatViewHolder extends RecyclerView.ViewHolder {
         private TextView tvTextMessage;
+        private TextView tvInfo;
         private ImageView ivGif;
         private CardView cvMessage;
         private RoundedImageView ivProfilePic;
@@ -46,6 +47,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             tvTextMessage = itemView.findViewById(R.id.tvTextMessage);
             cvMessage = itemView.findViewById(R.id.cvMessage);
             ivProfilePic = itemView.findViewById(R.id.ivProfileInMessage);
+            tvInfo = itemView.findViewById(R.id.tvInfo);
             ivGif = itemView.findViewById(R.id.ivGif);
         }
     }
@@ -85,10 +87,20 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     .into(chatViewHolder.ivGif);
         }
 
+        User author = Util.getUserData(message.getUserId(), mContext);
+        chatViewHolder.tvInfo.setText(author.getName() + "  |  " + Util.getFormattedTime((double) message.getTimestamp()));
+        chatViewHolder.tvInfo.setVisibility(View.GONE);
+
         chatViewHolder.cvMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onItemClickListener.onClick(message);
+
+                if (chatViewHolder.tvInfo.getVisibility() == View.GONE) {
+                    chatViewHolder.tvInfo.setVisibility(View.VISIBLE);
+                } else {
+                    chatViewHolder.tvInfo.setVisibility(View.GONE);
+                }
             }
         });
 
@@ -122,19 +134,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             params.addRule(RelativeLayout.RIGHT_OF, chatViewHolder.ivProfilePic.getId()); // align card right of profile pic
             chatViewHolder.cvMessage.setLayoutParams(params);
 
-            // TODO Store user info to avoid network calls for every message
-            DatabaseHelper.getUserInfo(message.getUserId(), new DatabaseHelper.OnUserInfoFetchListener() {
-                @Override
-                public void onUserInfoFetched(User author) {
-                    Glide.with(mContext).load(author.getPhotoUrl()).into(chatViewHolder.ivProfilePic);
-                }
-
-                @Override
-                public void onAllUsersInfoFetched(ArrayList<User> allUsers) {
-
-                }
-            });
-
+            Glide.with(mContext).load(author.getPhotoUrl()).into(chatViewHolder.ivProfilePic);
 
             // Change color of card view to white
             chatViewHolder.cvMessage.setCardBackgroundColor(mContext.getResources().getColor(R.color.colorGrey));

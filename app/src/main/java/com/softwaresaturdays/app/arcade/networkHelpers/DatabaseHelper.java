@@ -9,6 +9,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.softwaresaturdays.app.arcade.models.GifMessage;
 import com.softwaresaturdays.app.arcade.models.Message;
@@ -37,11 +38,12 @@ public class DatabaseHelper {
         colRef.document(message.getTimestamp() + "").set(message);
     }
 
-    public static void fetchMessages(final OnDatabaseFetchListener listener) {
+    public static void fetchMessages(int limit, final OnDatabaseFetchListener listener) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference colRef = db.collection(KEY_MESSAGES);
 
-        colRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+
+        colRef.orderBy("timestamp", Query.Direction.DESCENDING).limit(limit).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots,
                                 @javax.annotation.Nullable FirebaseFirestoreException e) {
@@ -54,14 +56,14 @@ public class DatabaseHelper {
                         if (documentSnapshot.get("type").equals(Message.TYPE_TEXT_MESSAGE)) {
                             try {
                                 TextMessage text = documentSnapshot.toObject(TextMessage.class);
-                                messages.add(text);
+                                messages.add(0, text);
                             } catch (Exception e2) {
                                 e2.printStackTrace();
                             }
                         } else if (documentSnapshot.get("type").equals(Message.TYPE_GIF_MESSAGE)) {
                             try {
                                 GifMessage gif = documentSnapshot.toObject(GifMessage.class);
-                                messages.add(gif);
+                                messages.add(0, gif);
                             } catch (Exception e2) {
                                 e2.printStackTrace();
                             }

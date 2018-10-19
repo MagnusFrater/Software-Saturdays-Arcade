@@ -25,6 +25,9 @@ import com.softwaresaturdays.app.arcade.MyApplication;
 import com.softwaresaturdays.app.arcade.R;
 import com.softwaresaturdays.app.arcade.models.User;
 import com.softwaresaturdays.app.arcade.networkHelpers.DatabaseHelper;
+import com.softwaresaturdays.app.arcade.utilities.Util;
+
+import java.util.ArrayList;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -59,6 +62,18 @@ public class LoginActivity extends AppCompatActivity {
         // Check for existing Google Sign In account, if the user is already signed in
         // the GoogleSignInAccount will be non-null.
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+
+        DatabaseHelper.getAllUsersInfo(new DatabaseHelper.OnUserInfoFetchListener() {
+            @Override
+            public void onUserInfoFetched(User user) {
+
+            }
+
+            @Override
+            public void onAllUsersInfoFetched(ArrayList<User> allUsers) {
+                Util.storeUserData(allUsers, LoginActivity.this);
+            }
+        });
 
         if (account == null) {
             mSignIn.setOnClickListener(new View.OnClickListener() {

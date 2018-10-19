@@ -1,6 +1,8 @@
 package com.softwaresaturdays.app.arcade.utilities;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -9,15 +11,19 @@ import com.softwaresaturdays.app.arcade.models.User;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Util {
 
+    public static final String USERS_KEY = "users";
+    public static final String PREF = "PREF";
     public static ArrayList<User> allUsers = new ArrayList<>();
 
     public static String getFormattedTime(Double time) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(time.longValue());
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EE, MMM d\nh:mm:ss aa");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EE, MMM d, h:mm aa");
         return simpleDateFormat.format(calendar.getTime());
     }
 
@@ -30,5 +36,22 @@ public class Util {
             view = new View(activity);
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public static void storeUserData(ArrayList<User> users, Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREF, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        for (User user : users) {
+            editor.putString(user.getUid(), user.toString());
+        }
+
+        editor.apply();
+    }
+
+    public static User getUserData(String uid, Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREF, Context.MODE_PRIVATE);
+
+        return new User(prefs.getString(uid, ""));
     }
 }

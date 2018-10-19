@@ -34,4 +34,21 @@ public class User {
     public String getUid() {
         return uid;
     }
+
+    public String toString() {
+        return name + "," + uid + "," + photoUrl + "," + email;
+    }
+
+    public User(String hashcode) {
+        String[] items = hashcode.split(",");
+
+        if (items.length != 4) {
+            return;
+        }
+
+        this.name = items[0];
+        this.uid = items[1];
+        this.photoUrl = items[2];
+        this.email = items[3];
+    }
 }
