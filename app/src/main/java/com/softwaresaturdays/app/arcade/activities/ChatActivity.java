@@ -1,5 +1,6 @@
 package com.softwaresaturdays.app.arcade.activities;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -9,8 +10,10 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -70,6 +73,12 @@ public class ChatActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public View onCreateView(String name, Context context, AttributeSet attrs) {
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        return super.onCreateView(name, context, attrs);
     }
 
     void refreshChatList() {
@@ -144,10 +153,16 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+        etTextMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mRvChat.scrollToPosition(mMessages.size() - 1);
+            }
+        });
+
         etTextMessage.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
