@@ -6,4 +6,5 @@ import com.softwaresaturdays.app.arcade.models.User;
 
 public class MyApplication extends Application {
     public static User currUser;
+    public static String fcmToken;
 }

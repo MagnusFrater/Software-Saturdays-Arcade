@@ -11,12 +11,15 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.softwaresaturdays.app.arcade.models.GifMessage;
 import com.softwaresaturdays.app.arcade.models.Message;
 import com.softwaresaturdays.app.arcade.models.TextMessage;
 import com.softwaresaturdays.app.arcade.models.User;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DatabaseHelper {
 
@@ -28,7 +31,8 @@ public class DatabaseHelper {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference colRef = db.collection(KEY_USERS);
 
-        colRef.document(user.getUid()).set(user);
+        // Merge data to avoid overwriting fields such as registration fcm token
+        colRef.document(user.getUid()).set(user, SetOptions.merge());
     }
 
     public static void uploadMessage(Message message) {

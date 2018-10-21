@@ -20,6 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.softwaresaturdays.app.arcade.MyApplication;
 import com.softwaresaturdays.app.arcade.R;
@@ -73,6 +74,12 @@ public class ChatActivity extends AppCompatActivity {
                 }
             }
         });
+
+        subscribeToNotifications();
+    }
+
+    private void subscribeToNotifications() {
+        FirebaseMessaging.getInstance().subscribeToTopic("arcade");
     }
 
     @Override
@@ -148,6 +155,10 @@ public class ChatActivity extends AppCompatActivity {
                     Message message = new TextMessage(text);
                     // Upload message to database
                     DatabaseHelper.uploadMessage(message);
+
+                    // Send notifications to all devices
+                    NetworkHelper.sendNotifications(MyApplication.currUser.getName() + " says " + text,
+                            MyApplication.currUser.getUid(), ChatActivity.this);
                 }
                 etTextMessage.setText("");
             }

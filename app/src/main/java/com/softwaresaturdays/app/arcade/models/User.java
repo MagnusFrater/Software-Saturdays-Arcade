@@ -7,6 +7,7 @@ public class User {
     private String name;
     private String photoUrl;
     private String uid;
+    private String fcmToken;
 
     public User() {
 
@@ -35,20 +36,29 @@ public class User {
         return uid;
     }
 
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
+    }
+
     public String toString() {
-        return name + "," + uid + "," + photoUrl + "," + email;
+        return name + "," + uid + "," + photoUrl + "," + email + "," + fcmToken;
     }
 
     public User(String hashcode) {
         String[] items = hashcode.split(",");
 
-        if (items.length != 4) {
-            return;
+        try {
+            this.name = items[0];
+            this.uid = items[1];
+            this.photoUrl = items[2];
+            this.email = items[3];
+            this.fcmToken = items[4];
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        this.name = items[0];
-        this.uid = items[1];
-        this.photoUrl = items[2];
-        this.email = items[3];
     }
 }

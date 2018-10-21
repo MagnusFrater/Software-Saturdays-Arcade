@@ -53,6 +53,61 @@ public class NetworkHelper {
         });
     }
 
+    public static void sendNotifications(final String message, final String userId, final Activity context) {
+        // Create an asynchronous network request
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+
+                try {
+                    // Create URL with parameters
+                    String url_FCM = "https://fcm.googleapis.com/fcm/send";
+
+                    URL fcmEndpoint = new URL(url_FCM);
+
+                    // Automatic caching
+                    HttpResponseCache myCache = HttpResponseCache.install(context.getCacheDir(), 100000L);
+
+                    // Create connection: Default GET Request
+                    HttpsURLConnection myConnection =
+                            (HttpsURLConnection) fcmEndpoint.openConnection();
+
+                    // Set POST request format
+                    myConnection.setRequestMethod("POST");
+
+                    // Enable writing
+                    myConnection.setDoOutput(true);
+
+                    // Add headers
+                    myConnection.addRequestProperty("Content-Type", "application/json");
+                    myConnection.addRequestProperty("Authorization", "key=AAAABtPUbQ4:APA91bE2bQB2U0R9lf18_vIKivQ8KdplyLWKbx88bsZDj4Id8qJkc7SWaLGDMr5otUGaPSCIT2_DjsFRzWmxG8d7kj_-tgKldm095m3YnOxjywl7QHOUrA09XYRazCVYFYXBlojLwTdB");
+
+                    // Create the data
+                    String myData = "{\n" +
+                            "  \"to\": \"/topics/arcade\",\n" +
+                            "  \"data\": {\n" +
+                            "    \"message\": \"" + message + "\"\n" +
+                            "    \"userId\": \"" + userId + "\"\n" +
+                            "  }\n" +
+                            "}";
+                    // Write the data
+                    myConnection.getOutputStream().write(myData.getBytes());
+
+                    if (myConnection.getResponseCode() == 200) {
+                        // Success
+                        // Further processing here
+
+                    } else {
+                        // Error handling code goes here
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+    }
+
     private static void processResponse(InputStream responseBody, OnFetchSuccessListener listener) {
         try {
             JsonParser jsonParser = new JsonParser();

@@ -152,6 +152,9 @@ public class LoginActivity extends AppCompatActivity {
 
         User newUser = new User(user.getEmail(), user.getDisplayName(), user.getPhotoUrl(), user.getUid());
         MyApplication.currUser = newUser;
+        if (MyApplication.fcmToken != null && !MyApplication.fcmToken.isEmpty()) {
+            MyApplication.currUser.setFcmToken(MyApplication.fcmToken);
+        }
         // Add user info on Database
         DatabaseHelper.uploadUserInfo(newUser);
     }
