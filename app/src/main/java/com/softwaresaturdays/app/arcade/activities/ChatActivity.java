@@ -149,9 +149,9 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String text = etTextMessage.getText().toString();
                 if (text.isEmpty()) {
-                    Snackbar.make(mRvChat, "Please enter text", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(mRvChat, "Please enter searchText", Snackbar.LENGTH_SHORT).show();
                 } else {
-                    // Create new text message
+                    // Create new searchText message
                     Message message = new TextMessage(text);
                     // Upload message to database
                     DatabaseHelper.uploadMessage(message);
@@ -198,7 +198,8 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (mIsGifButton) {
-                    NetworkHelper.fetchGIF(etTextMessage.getText().toString(), ChatActivity.this, new NetworkHelper.OnFetchSuccessListener() {
+                    final String gifSearchText = etTextMessage.getText().toString();
+                    NetworkHelper.fetchGIF(gifSearchText, ChatActivity.this, new NetworkHelper.OnFetchSuccessListener() {
                         @Override
                         public void onFetchedGifUrl(String gifUrl) {
                             // Got the url
@@ -206,16 +207,20 @@ public class ChatActivity extends AppCompatActivity {
 
                             if (gifUrl != null && !gifUrl.isEmpty()) {
                                 // Create a new GIF message
-                                Message message = new GifMessage(gifUrl);
+                                Message message = new GifMessage(gifUrl, gifSearchText);
                                 // Upload GIF message to database
                                 DatabaseHelper.uploadMessage(message);
+
+                                // Send notifications to all devices
+                                NetworkHelper.sendNotifications(MyApplication.currUser.getName() + " sent a GIF for " + gifSearchText,
+                                        MyApplication.currUser.getUid(), ChatActivity.this);
                             }
 
-                            Util.hideKeyboard(ChatActivity.this);
                             mRvChat.scrollToPosition(mMessages.size() - 1);
                         }
                     });
                     etTextMessage.setText("");
+                    Util.hideKeyboard(ChatActivity.this);
                 }
             }
         });

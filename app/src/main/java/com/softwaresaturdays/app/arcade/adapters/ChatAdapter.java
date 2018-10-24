@@ -71,12 +71,11 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if (message.getType().equals(Message.TYPE_TEXT_MESSAGE)) {
             TextMessage textMessage = (TextMessage) message;
             chatViewHolder.tvTextMessage.setText(textMessage.getText());
-            chatViewHolder.tvTextMessage.setVisibility(View.VISIBLE);
             chatViewHolder.ivGif.setVisibility(View.GONE);
         } else if (message.getType().equals(Message.TYPE_GIF_MESSAGE)) {
             GifMessage gifMessage = (GifMessage) message;
             chatViewHolder.ivGif.setVisibility(View.VISIBLE);
-            chatViewHolder.tvTextMessage.setVisibility(View.GONE);
+            chatViewHolder.tvTextMessage.setText(gifMessage.searchText);
             RequestOptions requestOptions = new RequestOptions();
             requestOptions.placeholder(R.drawable.progress);
             requestOptions.error(R.drawable.progress);
@@ -118,7 +117,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             // Change color of card view to primary color
             chatViewHolder.cvMessage.setCardBackgroundColor(mContext.getResources().getColor(R.color.colorPrimary));
 
-            // Change text color to white
+            // Change searchText color to white
             chatViewHolder.tvTextMessage.setTextColor(mContext.getResources().getColor(R.color.colorWhite));
         } else {
             // If the message was created by other users
@@ -139,7 +138,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             // Change color of card view to white
             chatViewHolder.cvMessage.setCardBackgroundColor(mContext.getResources().getColor(R.color.colorGrey));
 
-            // Change text color to Black
+            // Change searchText color to Black
             chatViewHolder.tvTextMessage.setTextColor(mContext.getResources().getColor(R.color.colorBlack));
         }
     }
