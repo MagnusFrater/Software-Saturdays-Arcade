@@ -3,6 +3,7 @@ package com.softwaresaturdays.app.arcade.activities;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -51,6 +52,7 @@ public class ChatActivity extends AppCompatActivity {
     private Game mSelectedGame;
     private int mLimit = 12;
     private LinearLayoutManager mLayoutManager;
+    private SwipeRefreshLayout mSwipeContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +125,27 @@ public class ChatActivity extends AppCompatActivity {
         mIvProfile = findViewById(R.id.ivProfile);
         final EditText etTextMessage = findViewById(R.id.etTextMessage);
         CardView cvPlayButton = findViewById(R.id.cvPlayButton);
+
+
+        mSwipeContainer = findViewById(R.id.swipeContainer);
+        // Setup refresh listener which triggers new data loading
+        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                mSwipeContainer.setRefreshing(false);
+                refreshChatList();
+            }
+        });
+
+        // Configure the refreshing colors
+        mSwipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
 
         assert MyApplication.currUser != null;
 
@@ -279,15 +302,5 @@ public class ChatActivity extends AppCompatActivity {
         mRvChat.setAdapter(mChatAdapter);
         mRvChat.setLayoutManager(mLayoutManager);
         mRvChat.scrollToPosition(mMessages.size() - 1);
-
-//        mRvChat.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-//                super.onScrolled(recyclerView, dx, dy);
-//                if (mLayoutManager.findFirstCompletelyVisibleItemPosition() == 1) {
-//                    //refreshChatList();
-//                }
-//            }
-//        });
     }
 }
