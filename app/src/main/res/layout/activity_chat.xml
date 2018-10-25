@@ -93,15 +93,15 @@
     <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/swipeContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="54dp"
+        android:layout_height="wrap_content"
+        android:paddingBottom="60dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rvChat"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="8dp" />
+            android:padding="10dp" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
@@ -110,7 +110,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:padding="8dp">
+        android:layout_marginBottom="22dp"
+        android:background="@color/colorWhite"
+        android:padding="8dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <com.makeramen.roundedimageview.RoundedImageView
             android:id="@+id/ivProfile"
@@ -130,7 +133,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="44dp"
             android:layout_toRightOf="@+id/ivProfile"
-            android:maxLines="5" />
+            android:maxLines="1" />
 
         <ImageView
             android:id="@+id/ivSend"

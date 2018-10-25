@@ -2,6 +2,7 @@ package com.softwaresaturdays.app.arcade.activities;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -72,13 +73,18 @@ public class ChatActivity extends AppCompatActivity {
                 });
                 if (mRvChat != null) {
                     mRvChat.setAdapter(mChatAdapter);
-                    mRvChat.scrollToPosition(mMessages.size() - 1);
+                    scrollToEnd();
                 }
             }
         });
 
         subscribeToNotifications();
     }
+
+    private void scrollToEnd() {
+        mLayoutManager.scrollToPosition(mChatAdapter.getItemCount() - 1);
+    }
+
 
     private void subscribeToNotifications() {
         FirebaseMessaging.getInstance().subscribeToTopic("arcade");
@@ -105,6 +111,7 @@ public class ChatActivity extends AppCompatActivity {
                 });
                 if (mRvChat != null) {
                     mRvChat.setAdapter(mChatAdapter);
+                    scrollToEnd();
                 }
             }
         });
@@ -190,7 +197,15 @@ public class ChatActivity extends AppCompatActivity {
         etTextMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mRvChat.scrollToPosition(mMessages.size() - 1);
+                new CountDownTimer(200, 200) {
+                    public void onFinish() {
+                        // When timer is finished
+                        scrollToEnd();
+                    }
+
+                    public void onTick(long millisUntilFinished) {
+                    }
+                }.start();
             }
         });
 
@@ -201,7 +216,6 @@ public class ChatActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
@@ -238,8 +252,6 @@ public class ChatActivity extends AppCompatActivity {
                                 NetworkHelper.sendNotifications(MyApplication.currUser.getName() + " sent a GIF for " + gifSearchText,
                                         MyApplication.currUser.getUid(), ChatActivity.this);
                             }
-
-                            mRvChat.scrollToPosition(mMessages.size() - 1);
                         }
                     });
                     etTextMessage.setText("");
@@ -301,6 +313,6 @@ public class ChatActivity extends AppCompatActivity {
 
         mRvChat.setAdapter(mChatAdapter);
         mRvChat.setLayoutManager(mLayoutManager);
-        mRvChat.scrollToPosition(mMessages.size() - 1);
+        scrollToEnd();
     }
 }
