@@ -111,7 +111,6 @@ public class ChatActivity extends AppCompatActivity {
                 });
                 if (mRvChat != null) {
                     mRvChat.setAdapter(mChatAdapter);
-                    scrollToEnd();
                 }
             }
         });
@@ -277,14 +276,14 @@ public class ChatActivity extends AppCompatActivity {
         mGameAdapter = new GameAdapter(this, sampleGames, new GameAdapter.OnItemClickListener() {
             @Override
             public void onClick(Game game) {
-                // Clicked on Game
-                mSelectedGame = game;
-
-                if (mRlGameInfo.getVisibility() == View.GONE) {
+                if (mRlGameInfo.getVisibility() == View.GONE || !mSelectedGame.getTitle().equals(game.getTitle())) {
                     fetchAndShowGameInfo(game);
                 } else {
                     hidGameInfo();
                 }
+
+                // Clicked on Game
+                mSelectedGame = game;
             }
         });
 
