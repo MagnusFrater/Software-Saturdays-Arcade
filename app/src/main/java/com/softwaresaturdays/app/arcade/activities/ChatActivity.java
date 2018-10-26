@@ -8,12 +8,14 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -38,7 +40,7 @@ import com.softwaresaturdays.app.arcade.utilities.Util;
 
 import java.util.ArrayList;
 
-public class ChatActivity extends AppCompatActivity {
+public class ChatActivity extends AppCompatActivity implements View.OnClickListener, PopupMenu.OnMenuItemClickListener {
 
     private RecyclerView mRvChat;
     private RecyclerView mRvGames;
@@ -54,6 +56,7 @@ public class ChatActivity extends AppCompatActivity {
     private int mLimit = 12;
     private LinearLayoutManager mLayoutManager;
     private SwipeRefreshLayout mSwipeContainer;
+    private EditText mEtTextMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +91,10 @@ public class ChatActivity extends AppCompatActivity {
 
     private void subscribeToNotifications() {
         FirebaseMessaging.getInstance().subscribeToTopic("arcade");
+    }
+
+    private void unsubscribeToNotifications() {
+        FirebaseMessaging.getInstance().unsubscribeFromTopic("arcade");
     }
 
     @Override
@@ -129,11 +136,11 @@ public class ChatActivity extends AppCompatActivity {
         mTvLeaderboard = findViewById(R.id.tvLeaderboard);
         ImageView ivSend = findViewById(R.id.ivSend);
         mIvProfile = findViewById(R.id.ivProfile);
-        final EditText etTextMessage = findViewById(R.id.etTextMessage);
+        mEtTextMessage = findViewById(R.id.etTextMessage);
         CardView cvPlayButton = findViewById(R.id.cvPlayButton);
-
-
         mSwipeContainer = findViewById(R.id.swipeContainer);
+
+
         // Setup refresh listener which triggers new data loading
         mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -164,51 +171,12 @@ public class ChatActivity extends AppCompatActivity {
         mRlGameInfo.setVisibility(View.GONE);
 
 
-        cvPlayButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mSelectedGame != null) {
-                    Snackbar.make(mRvChat, mSelectedGame.getTitle() + " is Under construction", Snackbar.LENGTH_SHORT).show();
-                }
-            }
-        });
+        cvPlayButton.setOnClickListener(this);
+        ivSend.setOnClickListener(this);
+        mEtTextMessage.setOnClickListener(this);
+        mIvProfile.setOnClickListener(this);
 
-        ivSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String text = etTextMessage.getText().toString();
-                if (text.isEmpty()) {
-                    Snackbar.make(mRvChat, "Please enter searchText", Snackbar.LENGTH_SHORT).show();
-                } else {
-                    // Create new searchText message
-                    Message message = new TextMessage(text);
-                    // Upload message to database
-                    DatabaseHelper.uploadMessage(message);
-
-                    // Send notifications to all devices
-                    NetworkHelper.sendNotifications(MyApplication.currUser.getName() + " says " + text,
-                            MyApplication.currUser.getUid(), ChatActivity.this);
-                }
-                etTextMessage.setText("");
-            }
-        });
-
-        etTextMessage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new CountDownTimer(200, 200) {
-                    public void onFinish() {
-                        // When timer is finished
-                        scrollToEnd();
-                    }
-
-                    public void onTick(long millisUntilFinished) {
-                    }
-                }.start();
-            }
-        });
-
-        etTextMessage.addTextChangedListener(new TextWatcher() {
+        mEtTextMessage.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -226,35 +194,6 @@ public class ChatActivity extends AppCompatActivity {
                     mIsGifButton = false;
                     // Load profile pic using Glide
                     Glide.with(ChatActivity.this).load(MyApplication.currUser.getPhotoUrl()).into(mIvProfile);
-                }
-            }
-        });
-
-        mIvProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mIsGifButton) {
-                    final String gifSearchText = etTextMessage.getText().toString();
-                    NetworkHelper.fetchGIF(gifSearchText, ChatActivity.this, new NetworkHelper.OnFetchSuccessListener() {
-                        @Override
-                        public void onFetchedGifUrl(String gifUrl) {
-                            // Got the url
-                            Log.d("CHAT ACTIVITY", "URL for GIF: " + gifUrl);
-
-                            if (gifUrl != null && !gifUrl.isEmpty()) {
-                                // Create a new GIF message
-                                Message message = new GifMessage(gifUrl, gifSearchText);
-                                // Upload GIF message to database
-                                DatabaseHelper.uploadMessage(message);
-
-                                // Send notifications to all devices
-                                NetworkHelper.sendNotifications(MyApplication.currUser.getName() + " sent a GIF for " + gifSearchText,
-                                        MyApplication.currUser.getUid(), ChatActivity.this);
-                            }
-                        }
-                    });
-                    etTextMessage.setText("");
-                    Util.hideKeyboard(ChatActivity.this);
                 }
             }
         });
@@ -313,5 +252,90 @@ public class ChatActivity extends AppCompatActivity {
         mRvChat.setAdapter(mChatAdapter);
         mRvChat.setLayoutManager(mLayoutManager);
         scrollToEnd();
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        switch (id) {
+            case R.id.cvPlayButton:
+                if (mSelectedGame != null) {
+                    Snackbar.make(mRvChat, mSelectedGame.getTitle() + " is Under construction", Snackbar.LENGTH_SHORT).show();
+                }
+                break;
+            case R.id.ivSend:
+                String text = mEtTextMessage.getText().toString();
+                if (text.isEmpty()) {
+                    Snackbar.make(mRvChat, "Please enter searchText", Snackbar.LENGTH_SHORT).show();
+                } else {
+                    // Create new searchText message
+                    Message message = new TextMessage(text);
+                    // Upload message to database
+                    DatabaseHelper.uploadMessage(message);
+
+                    // Send notifications to all devices
+                    NetworkHelper.sendNotifications(MyApplication.currUser.getName() + " says " + text,
+                            MyApplication.currUser.getUid(), ChatActivity.this);
+                }
+                mEtTextMessage.setText("");
+                break;
+            case R.id.etTextMessage:
+                new CountDownTimer(200, 200) {
+                    public void onFinish() {
+                        // When timer is finished
+                        scrollToEnd();
+                    }
+
+                    public void onTick(long millisUntilFinished) {
+                    }
+                }.start();
+                break;
+            case R.id.ivProfile:
+                if (mIsGifButton) {
+                    final String gifSearchText = mEtTextMessage.getText().toString();
+                    NetworkHelper.fetchGIF(gifSearchText, ChatActivity.this, new NetworkHelper.OnFetchSuccessListener() {
+                        @Override
+                        public void onFetchedGifUrl(String gifUrl) {
+                            // Got the url
+                            Log.d("CHAT ACTIVITY", "URL for GIF: " + gifUrl);
+
+                            if (gifUrl != null && !gifUrl.isEmpty()) {
+                                // Create a new GIF message
+                                Message message = new GifMessage(gifUrl, gifSearchText);
+                                // Upload GIF message to database
+                                DatabaseHelper.uploadMessage(message);
+
+                                // Send notifications to all devices
+                                NetworkHelper.sendNotifications(MyApplication.currUser.getName() + " sent a GIF for " + gifSearchText,
+                                        MyApplication.currUser.getUid(), ChatActivity.this);
+                            }
+                        }
+                    });
+                    mEtTextMessage.setText("");
+                    Util.hideKeyboard(ChatActivity.this);
+                } else {
+                    PopupMenu popupMenu = new PopupMenu(ChatActivity.this, mIvProfile);
+                    popupMenu.setOnMenuItemClickListener(ChatActivity.this);
+                    popupMenu.inflate(R.menu.popup_menu);
+                    popupMenu.show();
+                }
+                break;
+        }
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem menuItem) {
+        int id = menuItem.getItemId();
+        switch (id) {
+            case R.id.notificationsOFF:
+                unsubscribeToNotifications();
+                Snackbar.make(mIvProfile, "Notifications turned OFF", Snackbar.LENGTH_SHORT).show();
+                break;
+            case R.id.notificationsON:
+                subscribeToNotifications();
+                Snackbar.make(mIvProfile, "Notifications turned ON", Snackbar.LENGTH_SHORT).show();
+                break;
+        }
+        return false;
     }
 }

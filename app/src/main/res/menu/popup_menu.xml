@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/notificationsON"
+        android:title="Notifications ON"
+        android:visible="true"
+        app:showAsAction="ifRoom|withText" />
+
+    <item
+        android:id="@+id/notificationsOFF"
+        android:title="Notifications OFF"
+        android:visible="true"
+        app:showAsAction="ifRoom|withText" />
+
+</menu>
