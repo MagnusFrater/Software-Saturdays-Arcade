@@ -61,16 +61,22 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             String userId = remoteMessage.getData().get("userId");
 
             // Check if message contains a notification payload.
-            if (remoteMessage.getNotification() != null) {
-                Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
-            } else {
-                // If no notification payload, then create and display a notification
-
-                if (MyApplication.currUser != null && userId.equals(MyApplication.currUser.getUid()) && !MyApplication.isForeground) {
-                    // Don't display a notification to the author of the message
+            try {
+                if (remoteMessage.getNotification() != null) {
+                    Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
                 } else {
-                    sendNotification(message);
+                    // If no notification payload, then create and display a notification
+
+                    if (MyApplication.currUser != null) {
+                        if (userId.equals(MyApplication.currUser.getUid()) || MyApplication.isForeground) {
+                            // Don't display a notification to the author of the message
+                        } else {
+                            sendNotification(message);
+                        }
+                    }
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
