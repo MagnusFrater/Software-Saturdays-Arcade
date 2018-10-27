@@ -18,8 +18,6 @@ import com.softwaresaturdays.app.arcade.models.TextMessage;
 import com.softwaresaturdays.app.arcade.models.User;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class DatabaseHelper {
 
@@ -129,6 +127,12 @@ public class DatabaseHelper {
                 }
             }
         });
+    }
+
+    public static void deleteMessage(Message mSelectedMessage) {
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference colRef = db.collection(KEY_MESSAGES);
+        colRef.document(mSelectedMessage.getTimestamp() + "").delete();
     }
 
     public interface OnDatabaseFetchListener {

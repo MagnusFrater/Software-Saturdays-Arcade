@@ -103,6 +103,14 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
         });
 
+        chatViewHolder.cvMessage.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                onItemClickListener.onLongClick(message, chatViewHolder.cvMessage);
+                return true;
+            }
+        });
+
         // If the message is created by the user
         if (message.getUserId() != null && message.getUserId().equals(MyApplication.currUser.getUid())) {
 
@@ -151,6 +159,8 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public interface OnItemClickListener {
         void onClick(Message message);
+
+        void onLongClick(Message message, View v);
     }
 
 }

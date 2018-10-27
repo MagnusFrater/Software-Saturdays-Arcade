@@ -57,6 +57,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private LinearLayoutManager mLayoutManager;
     private SwipeRefreshLayout mSwipeContainer;
     private EditText mEtTextMessage;
+    private Message mSelectedMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,22 +67,38 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         DatabaseHelper.fetchMessages(mLimit, new DatabaseHelper.OnDatabaseFetchListener() {
             @Override
             public void onMessagesFetched(ArrayList<Message> messages) {
-                // Update messages REAL-TIME and update list view
-                mMessages = messages;
-                mChatAdapter = new ChatAdapter(ChatActivity.this, mMessages, new ChatAdapter.OnItemClickListener() {
-                    @Override
-                    public void onClick(Message message) {
-                        // Clicked on message
-                    }
-                });
-                if (mRvChat != null) {
-                    mRvChat.setAdapter(mChatAdapter);
-                    scrollToEnd();
-                }
+                refreshRecyclerView(messages);
+                scrollToEnd();
             }
         });
 
         subscribeToNotifications();
+    }
+
+    private void refreshRecyclerView(ArrayList<Message> messages) {
+        // Update messages REAL-TIME and update list view
+        mMessages = messages;
+        mChatAdapter = new ChatAdapter(ChatActivity.this, mMessages, new ChatAdapter.OnItemClickListener() {
+            @Override
+            public void onClick(Message message) {
+                // Clicked on message
+            }
+
+            @Override
+            public void onLongClick(Message message, View v) {
+                // Long click on message
+                if (message.getUserId().equals(MyApplication.currUser.getUid())) {
+                    PopupMenu popupMenu = new PopupMenu(ChatActivity.this, v);
+                    popupMenu.setOnMenuItemClickListener(ChatActivity.this);
+                    popupMenu.inflate(R.menu.popup_menu_message);
+                    popupMenu.show();
+                    mSelectedMessage = message;
+                }
+            }
+        });
+        if (mRvChat != null) {
+            mRvChat.setAdapter(mChatAdapter);
+        }
     }
 
     private void scrollToEnd() {
@@ -108,17 +125,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         DatabaseHelper.fetchMessages(mLimit, new DatabaseHelper.OnDatabaseFetchListener() {
             @Override
             public void onMessagesFetched(ArrayList<Message> messages) {
-                // Update messages REAL-TIME and update list view
-                mMessages = messages;
-                mChatAdapter = new ChatAdapter(ChatActivity.this, mMessages, new ChatAdapter.OnItemClickListener() {
-                    @Override
-                    public void onClick(Message message) {
-                        // Clicked on message
-                    }
-                });
-                if (mRvChat != null) {
-                    mRvChat.setAdapter(mChatAdapter);
-                }
+                refreshRecyclerView(messages);
             }
         });
     }
@@ -245,6 +252,18 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(Message message) {
                 // Clicked on message
             }
+
+            @Override
+            public void onLongClick(Message message, View v) {
+                // Long click on message
+                if (message.getUserId().equals(MyApplication.currUser.getUid())) {
+                    PopupMenu popupMenu = new PopupMenu(ChatActivity.this, v);
+                    popupMenu.setOnMenuItemClickListener(ChatActivity.this);
+                    popupMenu.inflate(R.menu.popup_menu_message);
+                    popupMenu.show();
+                    mSelectedMessage = message;
+                }
+            }
         });
 
         mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -335,6 +354,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 subscribeToNotifications();
                 Snackbar.make(mIvProfile, "Notifications turned ON", Snackbar.LENGTH_SHORT).show();
                 break;
+            case R.id.delete:
+                if (mSelectedMessage != null) {
+                    DatabaseHelper.deleteMessage(mSelectedMessage);
+                }
         }
         return false;
     }
