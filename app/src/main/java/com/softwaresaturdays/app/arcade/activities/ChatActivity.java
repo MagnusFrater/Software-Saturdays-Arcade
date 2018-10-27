@@ -147,6 +147,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         CardView cvPlayButton = findViewById(R.id.cvPlayButton);
         mSwipeContainer = findViewById(R.id.swipeContainer);
 
+        MyApplication.isForeground = true;
 
         // Setup refresh listener which triggers new data loading
         mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -360,5 +361,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 }
         }
         return false;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MyApplication.isForeground = false;
     }
 }

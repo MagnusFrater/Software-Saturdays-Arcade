@@ -63,6 +63,8 @@ public class LoginActivity extends AppCompatActivity {
         // the GoogleSignInAccount will be non-null.
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
 
+        MyApplication.isForeground = true;
+
         DatabaseHelper.getAllUsersInfo(new DatabaseHelper.OnUserInfoFetchListener() {
             @Override
             public void onUserInfoFetched(User user) {
@@ -157,5 +159,11 @@ public class LoginActivity extends AppCompatActivity {
         }
         // Add user info on Database
         DatabaseHelper.uploadUserInfo(newUser);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MyApplication.isForeground = false;
     }
 }

@@ -66,7 +66,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             } else {
                 // If no notification payload, then create and display a notification
 
-                if (MyApplication.currUser != null && userId.equals(MyApplication.currUser.getUid())) {
+                if (MyApplication.currUser != null && userId.equals(MyApplication.currUser.getUid()) && !MyApplication.isForeground) {
                     // Don't display a notification to the author of the message
                 } else {
                     sendNotification(message);
