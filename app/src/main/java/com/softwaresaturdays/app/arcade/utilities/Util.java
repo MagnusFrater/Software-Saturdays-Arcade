@@ -11,11 +11,11 @@ import com.softwaresaturdays.app.arcade.models.User;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Random;
 
 public class Util {
 
+    public static final Random random = new Random();
     public static final String USERS_KEY = "users";
     public static final String PREF = "PREF";
     public static ArrayList<User> allUsers = new ArrayList<>();
@@ -53,5 +53,9 @@ public class Util {
         SharedPreferences prefs = context.getSharedPreferences(PREF, Context.MODE_PRIVATE);
 
         return new User(prefs.getString(uid, ""));
+    }
+
+    public static int getRandInt(final int min, final int max) {
+        return random.nextInt((max - min) + 1) + min;
     }
 }
