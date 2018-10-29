@@ -3,6 +3,8 @@ package com.softwaresaturdays.app.arcade.utilities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -57,5 +59,11 @@ public class Util {
 
     public static int getRandInt(final int min, final int max) {
         return random.nextInt((max - min) + 1) + min;
+    }
+
+    public static float convertDpToPixel(final float dp, final Context context){
+        final Resources resources = context.getResources();
+        final DisplayMetrics metrics = resources.getDisplayMetrics();
+        return dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
     }
 }
