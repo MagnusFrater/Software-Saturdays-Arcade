@@ -1,6 +1,7 @@
 package com.softwaresaturdays.app.arcade.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.design.widget.Snackbar;
@@ -280,7 +281,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         switch (id) {
             case R.id.cvPlayButton:
                 if (mSelectedGame != null) {
-                    Snackbar.make(mRvChat, mSelectedGame.getTitle() + " is Under construction", Snackbar.LENGTH_SHORT).show();
+                    if (mSelectedGame.getTitle().equals("2048")) {
+                        startActivity(new Intent(getApplicationContext(), GameActivity.class));
+                    } else {
+                        Snackbar.make(mRvChat, mSelectedGame.getTitle() + " is Under construction", Snackbar.LENGTH_SHORT).show();
+                    }
                 }
                 break;
             case R.id.ivSend:
