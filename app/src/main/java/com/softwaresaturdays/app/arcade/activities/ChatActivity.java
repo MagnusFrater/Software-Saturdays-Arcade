@@ -40,13 +40,15 @@ import com.softwaresaturdays.app.arcade.networkHelpers.NetworkHelper;
 import com.softwaresaturdays.app.arcade.utilities.Util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ChatActivity extends AppCompatActivity implements View.OnClickListener, PopupMenu.OnMenuItemClickListener {
 
     private RecyclerView mRvChat;
     private RecyclerView mRvGames;
     private ArrayList<Message> mMessages = new ArrayList<>();
-    private ArrayList<Game> mGames = new ArrayList<>();
+    private HashMap<String, Game> mGamesPlayable = new HashMap<>();
+    private ArrayList<Game> mGamesUnderConstruction = new ArrayList<>();
     private ChatAdapter mChatAdapter;
     private GameAdapter mGameAdapter;
     private RelativeLayout mRlGameInfo;
@@ -214,14 +216,17 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setupGamesList() {
-        ArrayList<Game> sampleGames = new ArrayList<>();
-        sampleGames.add(new Game("2048"));
-        sampleGames.add(new Game("Tic Tac Toe"));
-        sampleGames.add(new Game("Pac Man"));
-        sampleGames.add(new Game("Hang Man"));
-        sampleGames.add(new Game("Flappy Bird"));
+        mGamesPlayable.put("2048", new Game("2048", GameActivity.class));
 
-        mGameAdapter = new GameAdapter(this, sampleGames, new GameAdapter.OnItemClickListener() {
+        mGamesUnderConstruction.add(new Game("Tic Tac Toe"));
+        mGamesUnderConstruction.add(new Game("Pac Man"));
+        mGamesUnderConstruction.add(new Game("Hang Man"));
+        mGamesUnderConstruction.add(new Game("Flappy Bird"));
+
+        final ArrayList<Game> allGames = new ArrayList<>(mGamesPlayable.values());
+        allGames.addAll(mGamesUnderConstruction);
+
+        mGameAdapter = new GameAdapter(this, allGames, new GameAdapter.OnItemClickListener() {
             @Override
             public void onClick(Game game) {
                 if (mRlGameInfo.getVisibility() == View.GONE || !mSelectedGame.getTitle().equals(game.getTitle())) {
@@ -281,8 +286,13 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         switch (id) {
             case R.id.cvPlayButton:
                 if (mSelectedGame != null) {
-                    if (mSelectedGame.getTitle().equals("2048")) {
-                        startActivity(new Intent(getApplicationContext(), GameActivity.class));
+                    if (mGamesPlayable.containsKey(mSelectedGame.getTitle())) {
+                        final Class cls = mGamesPlayable.get(mSelectedGame.getTitle()).getCls();
+                        if (cls != null) {
+                            startActivity(new Intent(getApplicationContext(), cls));
+                        } else {
+                            Snackbar.make(mRvChat, "Game activity doesn't exist for: " + mSelectedGame.getTitle(), Snackbar.LENGTH_SHORT).show();
+                        }
                     } else {
                         Snackbar.make(mRvChat, mSelectedGame.getTitle() + " is Under construction", Snackbar.LENGTH_SHORT).show();
                     }
