@@ -24,19 +24,19 @@ public class TwentyFourtyEight extends GameActivity implements View.OnTouchListe
             @Override
             public boolean onSwipe(Direction direction) {
                 if (direction == Direction.up){
-                    Snackbar.make(findViewById(R.id.layout), "onSwipe: up", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(findViewById(R.id.clLayout), "onSwipe: up", Snackbar.LENGTH_SHORT).show();
                 }
 
                 if (direction == Direction.down){
-                    Snackbar.make(findViewById(R.id.layout), "onSwipe: down", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(findViewById(R.id.clLayout), "onSwipe: down", Snackbar.LENGTH_SHORT).show();
                 }
 
                 if (direction == Direction.left){
-                    Snackbar.make(findViewById(R.id.layout), "onSwipe: left", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(findViewById(R.id.clLayout), "onSwipe: left", Snackbar.LENGTH_SHORT).show();
                 }
 
                 if (direction == Direction.right){
-                    Snackbar.make(findViewById(R.id.layout), "onSwipe: right", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(findViewById(R.id.clLayout), "onSwipe: right", Snackbar.LENGTH_SHORT).show();
                 }
 
                 return true;
@@ -45,7 +45,7 @@ public class TwentyFourtyEight extends GameActivity implements View.OnTouchListe
 
         });
 
-        findViewById(R.id.layout).setOnTouchListener(this);
+        findViewById(R.id.clLayout).setOnTouchListener(this);
     }
 
     @Override
