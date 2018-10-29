@@ -44,7 +44,8 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
 
-        <activity android:name=".activities.GameActivity"></activity>
+        <activity android:name=".activities.GameActivity" />
+        <activity android:name=".activities.games.TwentyFourtyEight"></activity>
     </application>
 
 </manifest>
