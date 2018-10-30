@@ -319,7 +319,7 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
             score += update;
         }
 
-        ((TextView) findViewById(R.id.tvScore)).setText(score + "");
+        ((TextView) findViewById(R.id.tvScore)).setText(String.valueOf(score));
     }
 }
 
