@@ -10,7 +10,6 @@ import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.softwaresaturdays.app.arcade.R;
@@ -28,6 +27,7 @@ public class TwentyFourtyEight extends GameActivity implements View.OnTouchListe
 
     // 2048
     int[][] board;
+    final int boardSize = 4;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -71,6 +71,7 @@ public class TwentyFourtyEight extends GameActivity implements View.OnTouchListe
         populateBoardView();
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         gestureDetector.onTouchEvent(event);
@@ -154,44 +155,146 @@ public class TwentyFourtyEight extends GameActivity implements View.OnTouchListe
     }
 
     private void swipeUp() {
+        moveUp();
         birthCell();
         populateBoardView();
     }
 
     private void swipeDown() {
+        moveDown();
         birthCell();
         populateBoardView();
     }
 
     private void swipeLeft() {
+        moveLeft();
         birthCell();
         populateBoardView();
     }
 
     private void swipeRight() {
+        moveRight();
         birthCell();
         populateBoardView();
     }
 
-    private void birthCell() {
-        // find all unused cells
-        final List<Integer> unusedCells = new ArrayList<>();
-        for (int y=0; y<4; y++) {
-            for (int x=0; x<4; x++) {
-                if (board[y][x] == 0) {
-                    unusedCells.add(y*4 + x);
+    public boolean moveTo(int fromRow, int fromCol, int toRow, int toCol) {
+        // check the bounds
+        if (isCoordinateOutOfBounds(fromRow, fromCol) || isCoordinateOutOfBounds(toRow, toCol)) {
+            return false;
+        }
+
+        if (fromRow == toRow + 1 && fromCol == toCol) {
+            // doNothing
+        } else if (fromRow == toRow - 1 && fromCol == toCol) {
+            // doNothing
+        } else if (fromCol == toCol + 1 && fromRow == toRow) {
+            // doNothing
+        } else if (fromCol == toCol - 1 && fromRow == toRow) {
+            // doNothing
+        } else {
+            return false;
+        }
+
+        final int from = board[fromRow][fromCol];
+        final int to = board[toRow][toCol];
+
+        if (from == 0) {
+            return false;
+        }
+
+        if (to == 0 || to == from) {
+            board[toRow][toCol] = from + to;
+            board[fromRow][fromCol] = 0;
+//            if(to == from)
+//                score += from + to;
+            return true;
+        }
+
+        return false;
+    }
+
+    public void moveUp(){
+        boolean madeMove = true;
+        while (madeMove) {
+            madeMove = false;
+
+            for(int x = 0; x < boardSize; x++) {
+                for(int y = 0; y < boardSize; y++) {
+                    madeMove = moveTo(x, y, x-1,y) || madeMove;
                 }
             }
         }
+    }
+
+    public void moveDown() {
+        boolean madeMove = true;
+        while (madeMove) {
+            madeMove = false;
+
+            for (int x = boardSize - 1; x >= 0; x--) {
+                for (int y = 0; y < boardSize; y++) {
+                    madeMove = moveTo(x, y, x + 1, y) || madeMove;
+                }
+            }
+        }
+    }
+
+    public void moveRight() {
+        boolean madeMove = true;
+        while (madeMove) {
+            madeMove = false;
+
+            for (int x = 0; x < boardSize; x++) {
+                for (int y = boardSize - 1; y >= 0; y--) {
+                    madeMove = moveTo(x, y, x, y + 1) || madeMove;
+                }
+            }
+        }
+    }
+
+    public void moveLeft() {
+        boolean madeMove = true;
+        while (madeMove) {
+            madeMove = false;
+
+            for (int x = 0; x < boardSize; x++) {
+                for (int y = 0; y < boardSize; y++) {
+                    madeMove = moveTo(x, y, x, y - 1) || madeMove;
+                }
+            }
+        }
+    }
+
+    private List<Integer> getUnusedCells() {
+        // find all unused cells
+        final List<Integer> unusedCells = new ArrayList<>();
+        for (int y=0; y<boardSize; y++) {
+            for (int x=0; x<boardSize; x++) {
+                if (board[y][x] == 0) {
+                    unusedCells.add(y*boardSize + x);
+                }
+            }
+        }
+
+        return unusedCells;
+    }
+
+    private void birthCell() {
+        final List<Integer> unusedCells = getUnusedCells();
 
         // make sure there are actually some unused cells
         if (unusedCells.size() == 0) return;
 
         // pick random unused cell to birth
         final int unusedCell = unusedCells.get(Util.getRandInt(0, unusedCells.size()-1));
-        final int y = unusedCell / 4;
-        final int x = unusedCell % 4;
+        final int y = unusedCell / boardSize;
+        final int x = unusedCell % boardSize;
         board[y][x] = (Util.getRandInt(0,3) == 0)? 4 : 2;
+    }
+
+    private boolean isCoordinateOutOfBounds(final int y, final int x) {
+        return y < 0 || y > boardSize - 1 || x < 0 || x > boardSize - 1;
     }
 }
 
