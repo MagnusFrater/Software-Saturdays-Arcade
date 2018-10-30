@@ -180,18 +180,6 @@ public class TwentyFourtyEight extends GameActivity implements View.OnTouchListe
             return false;
         }
 
-        if (fromRow == toRow + 1 && fromCol == toCol) {
-            // doNothing
-        } else if (fromRow == toRow - 1 && fromCol == toCol) {
-            // doNothing
-        } else if (fromCol == toCol + 1 && fromRow == toRow) {
-            // doNothing
-        } else if (fromCol == toCol - 1 && fromRow == toRow) {
-            // doNothing
-        } else {
-            return false;
-        }
-
         final int from = board[fromRow][fromCol];
         final int to = board[toRow][toCol];
 
