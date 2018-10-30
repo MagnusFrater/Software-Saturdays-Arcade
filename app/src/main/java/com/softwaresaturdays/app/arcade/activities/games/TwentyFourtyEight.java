@@ -155,26 +155,22 @@ public class TwentyFourtyEight extends GameActivity implements View.OnTouchListe
     }
 
     private void swipeUp() {
-        moveUp();
-        birthCell();
+        if (moveUp()) birthCell();
         populateBoardView();
     }
 
     private void swipeDown() {
-        moveDown();
-        birthCell();
+        if (moveDown()) birthCell();
         populateBoardView();
     }
 
     private void swipeLeft() {
-        moveLeft();
-        birthCell();
+        if (moveLeft()) birthCell();
         populateBoardView();
     }
 
     private void swipeRight() {
-        moveRight();
-        birthCell();
+        if (moveRight()) birthCell();
         populateBoardView();
     }
 
@@ -206,28 +202,32 @@ public class TwentyFourtyEight extends GameActivity implements View.OnTouchListe
         if (to == 0 || to == from) {
             board[toRow][toCol] = from + to;
             board[fromRow][fromCol] = 0;
-//            if(to == from)
-//                score += from + to;
             return true;
         }
 
         return false;
     }
 
-    public void moveUp(){
+    public boolean moveUp(){
+        int cycles = 0;
         boolean madeMove = true;
         while (madeMove) {
             madeMove = false;
 
-            for(int x = 0; x < boardSize; x++) {
-                for(int y = 0; y < boardSize; y++) {
-                    madeMove = moveTo(x, y, x-1,y) || madeMove;
+            for (int x = 0; x < boardSize; x++) {
+                for (int y = 0; y < boardSize; y++) {
+                    madeMove = moveTo(x, y, x - 1, y) || madeMove;
                 }
             }
+
+            cycles++;
         }
+
+        return cycles > 1;
     }
 
-    public void moveDown() {
+    public boolean moveDown() {
+        int cycles = 0;
         boolean madeMove = true;
         while (madeMove) {
             madeMove = false;
@@ -237,10 +237,15 @@ public class TwentyFourtyEight extends GameActivity implements View.OnTouchListe
                     madeMove = moveTo(x, y, x + 1, y) || madeMove;
                 }
             }
+
+            cycles++;
         }
+
+        return cycles > 1;
     }
 
-    public void moveRight() {
+    public boolean moveRight() {
+        int cycles = 0;
         boolean madeMove = true;
         while (madeMove) {
             madeMove = false;
@@ -250,10 +255,15 @@ public class TwentyFourtyEight extends GameActivity implements View.OnTouchListe
                     madeMove = moveTo(x, y, x, y + 1) || madeMove;
                 }
             }
+
+            cycles++;
         }
+
+        return cycles > 1;
     }
 
-    public void moveLeft() {
+    public boolean moveLeft() {
+        int cycles = 0;
         boolean madeMove = true;
         while (madeMove) {
             madeMove = false;
@@ -263,11 +273,14 @@ public class TwentyFourtyEight extends GameActivity implements View.OnTouchListe
                     madeMove = moveTo(x, y, x, y - 1) || madeMove;
                 }
             }
+
+            cycles++;
         }
+
+        return cycles > 1;
     }
 
     private List<Integer> getUnusedCells() {
-        // find all unused cells
         final List<Integer> unusedCells = new ArrayList<>();
         for (int y=0; y<boardSize; y++) {
             for (int x=0; x<boardSize; x++) {
