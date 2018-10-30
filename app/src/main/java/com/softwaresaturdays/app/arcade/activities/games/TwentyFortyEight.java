@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.GridLayout;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -159,6 +160,7 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
     private void swipeUp() {
         if (moveUp()){
             birthCell();
+            checkGameOver();
         }
         populateBoardView();
     }
@@ -166,6 +168,7 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
     private void swipeDown() {
         if (moveDown()) {
             birthCell();
+            checkGameOver();
         }
         populateBoardView();
     }
@@ -173,6 +176,7 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
     private void swipeLeft() {
         if (moveLeft()) {
             birthCell();
+            checkGameOver();
         }
         populateBoardView();
     }
@@ -180,6 +184,7 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
     private void swipeRight() {
         if (moveRight()) {
             birthCell();
+            checkGameOver();
         }
         populateBoardView();
     }
@@ -320,6 +325,47 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
         }
 
         ((TextView) findViewById(R.id.tvScore)).setText(String.valueOf(score));
+    }
+
+    private void checkGameOver() {
+        if (getUnusedCells().size() > 0) {
+            return;
+        }
+
+        for (int y=0; y<boardSize; y++) {
+            for (int x=0; x<boardSize; x++) {
+                if (similarNeighbour(y, x)) {
+                    return;
+                }
+            }
+        }
+
+        gameOver();
+    }
+
+    // returns true if above/below/left/right neighbour has same value
+    private boolean similarNeighbour(final int y, final int x) {
+        final int[] deltaY = {-1, 1, 0, 0};
+        final int[] deltaX = {0, 0, -1, 1};
+
+        for (int i=0; i<deltaY.length; i++) {
+            final int neighbourY = y + deltaY[i];
+            final int neighbourX = x + deltaX[i];
+
+            if (isCoordinateOutOfBounds(neighbourY, neighbourX)) {
+                continue;
+            }
+
+            if (board[neighbourY][neighbourX] == board[y][x]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void gameOver() {
+        Snackbar.make(findViewById(R.id.clLayout), "Game Over!", Snackbar.LENGTH_SHORT).show();
     }
 }
 
