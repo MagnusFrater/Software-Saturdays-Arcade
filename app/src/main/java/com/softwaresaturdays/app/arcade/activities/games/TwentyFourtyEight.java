@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.GridLayout;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -25,9 +24,8 @@ public class TwentyFourtyEight extends GameActivity implements View.OnTouchListe
     private GridLayout glBoard;
     private GestureDetector gestureDetector;
 
-    // 2048
-    int[][] board;
-    final int boardSize = 4;
+    private int[][] board;
+    private final int boardSize = 4;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -35,10 +33,9 @@ public class TwentyFourtyEight extends GameActivity implements View.OnTouchListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_twenty_fourty_eight);
 
-        // views
-        ConstraintLayout clLayout = findViewById(R.id.clLayout);
-        glBoard = findViewById(R.id.glBoard);
+        findViewById(R.id.clLayout).setOnTouchListener(this);
 
+        glBoard = findViewById(R.id.glBoard);
         gestureDetector = new GestureDetector(this,new OnSwipeListener(){
 
             @Override
@@ -65,8 +62,6 @@ public class TwentyFourtyEight extends GameActivity implements View.OnTouchListe
 
         });
 
-        clLayout.setOnTouchListener(this);
-
         initializeBoard();
         populateBoardView();
     }
@@ -79,15 +74,15 @@ public class TwentyFourtyEight extends GameActivity implements View.OnTouchListe
     }
 
     private void initializeBoard() {
-        board = new int[4][4];
+        board = new int[boardSize][boardSize];
         birthCell();
     }
 
     private void populateBoardView() {
         glBoard.removeAllViews();
 
-        for (int y=0; y<4; y++) {
-            for (int x=0; x<4; x++) {
+        for (int y=0; y<boardSize; y++) {
+            for (int x=0; x<boardSize; x++) {
                 final TextView tvCell = new TextView(this);
                 tvCell.setBackgroundColor(getCellBackgroundColor(board[y][x])); // hex color 0xAARRGGBB
 
@@ -175,7 +170,6 @@ public class TwentyFourtyEight extends GameActivity implements View.OnTouchListe
     }
 
     public boolean moveTo(int fromRow, int fromCol, int toRow, int toCol) {
-        // check the bounds
         if (isCoordinateOutOfBounds(fromRow, fromCol) || isCoordinateOutOfBounds(toRow, toCol)) {
             return false;
         }
