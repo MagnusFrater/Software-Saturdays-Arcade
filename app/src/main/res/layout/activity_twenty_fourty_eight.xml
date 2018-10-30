@@ -5,6 +5,7 @@
     android:id="@+id/clLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#fff3e8"
     tools:context=".activities.games.TwentyFourtyEight">
 
     <android.support.v7.widget.GridLayout
@@ -29,6 +30,7 @@
         android:id="@+id/glBoard"
         android:layout_width="360dp"
         android:layout_height="360dp"
+        android:background="#cebcab"
         app:columnCount="4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

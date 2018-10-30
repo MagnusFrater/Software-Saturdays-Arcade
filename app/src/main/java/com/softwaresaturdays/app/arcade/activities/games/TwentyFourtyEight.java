@@ -10,6 +10,7 @@ import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.softwaresaturdays.app.arcade.R;
@@ -87,16 +88,25 @@ public class TwentyFourtyEight extends GameActivity implements View.OnTouchListe
         for (int y=0; y<4; y++) {
             for (int x=0; x<4; x++) {
                 final TextView tvCell = new TextView(this);
-                tvCell.setLayoutParams(new ActionBar.LayoutParams(
-                        (int)Util.convertDpToPixel(90, this),
-                        (int)Util.convertDpToPixel(90, this)
-                ));
+                tvCell.setBackgroundColor(getCellBackgroundColor(board[y][x])); // hex color 0xAARRGGBB
+
+                final int size = (int)Util.convertDpToPixel(80, this);
+                final int margin = (int)Util.convertDpToPixel(8, this);
+                final ActionBar.LayoutParams params = new ActionBar.LayoutParams(size, size);
+                params.setMargins(
+                        (x == 0)? margin : 0,
+                        (y == 0)? margin : 0,
+                        margin,
+                        margin
+                );
+                tvCell.setLayoutParams(params);
+
                 tvCell.setTextSize(35);
                 tvCell.setGravity(Gravity.CENTER);
                 tvCell.setTypeface(null, Typeface.BOLD);
-                tvCell.setBackgroundColor(getCellBackgroundColor(board[y][x])); // hex color 0xAARRGGBB
                 tvCell.setTextColor(getCellTextColor(board[y][x]));
                 tvCell.setText(((board[y][x] > 0)? String.valueOf(board[y][x]) : ""));
+
                 glBoard.addView(tvCell);
             }
         }
