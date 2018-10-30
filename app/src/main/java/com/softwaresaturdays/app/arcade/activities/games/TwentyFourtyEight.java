@@ -58,8 +58,13 @@ public class TwentyFourtyEight extends GameActivity implements View.OnTouchListe
 
                 return true;
             }
-
-
+        });
+        findViewById(R.id.bReset).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                initializeBoard();
+                populateBoardView();
+            }
         });
 
         initializeBoard();
