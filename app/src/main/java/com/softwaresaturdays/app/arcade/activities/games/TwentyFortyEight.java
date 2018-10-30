@@ -2,6 +2,9 @@ package com.softwaresaturdays.app.arcade.activities.games;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -13,6 +16,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.softwaresaturdays.app.arcade.R;
+import com.softwaresaturdays.app.arcade.activities.ChatActivity;
 import com.softwaresaturdays.app.arcade.activities.GameActivity;
 import com.softwaresaturdays.app.arcade.listeners.OnSwipeListener;
 import com.softwaresaturdays.app.arcade.utilities.Util;
@@ -65,12 +69,10 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
             @Override
             public void onClick(View view) {
                 resetGame();
-                populateBoardView();
             }
         });
 
         resetGame();
-        populateBoardView();
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -84,6 +86,7 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
         board = new int[boardSize][boardSize];
         birthCell();
         updateScore(0);
+        populateBoardView();
     }
 
     private void populateBoardView() {
@@ -365,7 +368,22 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
     }
 
     private void gameOver() {
-        Snackbar.make(findViewById(R.id.clLayout), "Game Over!", Snackbar.LENGTH_SHORT).show();
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("GAME OVER");
+
+        alert.setPositiveButton("Restart", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                resetGame();
+            }
+        });
+
+        alert.setNegativeButton("Back to chat", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                startActivity(new Intent(getApplicationContext(), ChatActivity.class));
+            }
+        });
+
+        alert.show();
     }
 }
 
