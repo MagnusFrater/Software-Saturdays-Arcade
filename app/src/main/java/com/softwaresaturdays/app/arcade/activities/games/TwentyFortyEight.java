@@ -19,13 +19,14 @@ import com.softwaresaturdays.app.arcade.utilities.Util;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TwentyFourtyEight extends GameActivity implements View.OnTouchListener {
+public class TwentyFortyEight extends GameActivity implements View.OnTouchListener {
 
     private GridLayout glBoard;
     private GestureDetector gestureDetector;
 
     private int[][] board;
     private final int boardSize = 4;
+    private int score;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -62,12 +63,12 @@ public class TwentyFourtyEight extends GameActivity implements View.OnTouchListe
         findViewById(R.id.bReset).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                initializeBoard();
+                resetGame();
                 populateBoardView();
             }
         });
 
-        initializeBoard();
+        resetGame();
         populateBoardView();
     }
 
@@ -78,9 +79,10 @@ public class TwentyFourtyEight extends GameActivity implements View.OnTouchListe
         return true;
     }
 
-    private void initializeBoard() {
+    private void resetGame() {
         board = new int[boardSize][boardSize];
         birthCell();
+        updateScore(0);
     }
 
     private void populateBoardView() {
@@ -197,6 +199,11 @@ public class TwentyFourtyEight extends GameActivity implements View.OnTouchListe
         if (to == 0 || to == from) {
             board[toRow][toCol] = from + to;
             board[fromRow][fromCol] = 0;
+
+            if (to == from) {
+                updateScore(board[toRow][toCol]);
+            }
+
             return true;
         }
 
@@ -303,6 +310,16 @@ public class TwentyFourtyEight extends GameActivity implements View.OnTouchListe
 
     private boolean isCoordinateOutOfBounds(final int y, final int x) {
         return y < 0 || y > boardSize - 1 || x < 0 || x > boardSize - 1;
+    }
+
+    private void updateScore(final int update) {
+        if (update == 0) {
+            score = 0;
+        } else {
+            score += update;
+        }
+
+        ((TextView) findViewById(R.id.tvScore)).setText(score + "");
     }
 }
 
