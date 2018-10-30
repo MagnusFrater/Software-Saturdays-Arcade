@@ -150,22 +150,30 @@ public class TwentyFourtyEight extends GameActivity implements View.OnTouchListe
     }
 
     private void swipeUp() {
-        if (moveUp()) birthCell();
+        if (moveUp()){
+            birthCell();
+        }
         populateBoardView();
     }
 
     private void swipeDown() {
-        if (moveDown()) birthCell();
+        if (moveDown()) {
+            birthCell();
+        }
         populateBoardView();
     }
 
     private void swipeLeft() {
-        if (moveLeft()) birthCell();
+        if (moveLeft()) {
+            birthCell();
+        }
         populateBoardView();
     }
 
     private void swipeRight() {
-        if (moveRight()) birthCell();
+        if (moveRight()) {
+            birthCell();
+        }
         populateBoardView();
     }
 
