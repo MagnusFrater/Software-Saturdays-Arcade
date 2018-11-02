@@ -37,11 +37,6 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Remove notification bar
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-        //set content view AFTER ABOVE sequence (to avoid crash)
         setContentView(R.layout.activity_twenty_fourty_eight);
 
         findViewById(R.id.clLayout).setOnTouchListener(this);
