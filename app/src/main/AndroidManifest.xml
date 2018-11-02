@@ -45,7 +45,8 @@
             android:resource="@color/colorAccent" />
 
         <activity android:name=".activities.GameActivity" />
-        <activity android:name=".activities.games.TwentyFortyEight"></activity>
+        <activity android:name=".activities.games.TwentyFortyEight" />
+        <activity android:name=".activities.games.TicTacToe"></activity>
     </application>
 
 </manifest>
