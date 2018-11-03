@@ -9,4 +9,7 @@
     <string name="oh">O</string>
     <string name="your_turn">Your Turn!</string>
     <string name="opponents_turn">Opponent\'s Turn!</string>
+    <string name="win">You win!</string>
+    <string name="lose">You lose :\'(</string>
+    <string name="tie">Tie game!</string>
 </resources>
