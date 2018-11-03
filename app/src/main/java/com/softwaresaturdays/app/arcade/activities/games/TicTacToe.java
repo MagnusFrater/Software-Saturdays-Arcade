@@ -73,17 +73,19 @@ public class TicTacToe extends AppCompatActivity {
                         return;
                     }
 
-                    if (turn % 2 == 0) {
-                        tvCell.setText("X");
-                    } else {
-                        tvCell.setText("O");
-                    }
-
-                    turn++;
+                    takeTurn(tvCell);
                 }
             });
 
             glBoard.addView(tvCell);
         }
+    }
+
+    private void takeTurn(final TextView tvCell) {
+        tvCell.setText((turn % 2 == 0)? "X" : "O");
+
+        ((TextView) findViewById(R.id.tvTurn)).setText((turn % 2 == 0)? R.string.your_turn : R.string.opponents_turn);
+
+        turn = ++turn % 2;
     }
 }
