@@ -159,12 +159,12 @@ public class TicTacToe extends AppCompatActivity {
     }
 
     private void gameOver(final boolean tie) {
-        state = STATE.GAME_OVER;
-
         if (tie) {
             ((TextView) findViewById(R.id.tvTurn)).setText(R.string.tie);
         } else {
             ((TextView) findViewById(R.id.tvTurn)).setText((state == STATE.YOU)? R.string.win : R.string.lose);
         }
+
+        state = STATE.GAME_OVER;
     }
 }
