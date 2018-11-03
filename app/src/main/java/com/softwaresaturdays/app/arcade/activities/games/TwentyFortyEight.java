@@ -12,7 +12,6 @@ import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.softwaresaturdays.app.arcade.R;
@@ -42,7 +41,7 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
         findViewById(R.id.clLayout).setOnTouchListener(this);
 
         glBoard = findViewById(R.id.glBoard);
-        gestureDetector = new GestureDetector(this,new OnSwipeListener(){
+        gestureDetector = new GestureDetector(this, new OnSwipeListener() {
 
             @Override
             public boolean onSwipe(Direction direction) {
@@ -92,17 +91,17 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
     private void populateBoardView() {
         glBoard.removeAllViews();
 
-        for (int y=0; y<boardSize; y++) {
-            for (int x=0; x<boardSize; x++) {
+        for (int y = 0; y < boardSize; y++) {
+            for (int x = 0; x < boardSize; x++) {
                 final TextView tvCell = new TextView(this);
                 tvCell.setBackgroundColor(getCellBackgroundColor(board[y][x])); // hex color 0xAARRGGBB
 
-                final int size = (int)Util.convertDpToPixel(80, this);
-                final int margin = (int)Util.convertDpToPixel(8, this);
+                final int size = (int) Util.convertDpToPixel(80, this);
+                final int margin = (int) Util.convertDpToPixel(8, this);
                 final ActionBar.LayoutParams params = new ActionBar.LayoutParams(size, size);
                 params.setMargins(
-                        (x == 0)? margin : 0,
-                        (y == 0)? margin : 0,
+                        (x == 0) ? margin : 0,
+                        (y == 0) ? margin : 0,
                         margin,
                         margin
                 );
@@ -112,7 +111,7 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
                 tvCell.setGravity(Gravity.CENTER);
                 tvCell.setTypeface(null, Typeface.BOLD);
                 tvCell.setTextColor(getCellTextColor(board[y][x]));
-                tvCell.setText(((board[y][x] > 0)? String.valueOf(board[y][x]) : ""));
+                tvCell.setText(((board[y][x] > 0) ? String.valueOf(board[y][x]) : ""));
 
                 glBoard.addView(tvCell);
             }
@@ -161,7 +160,7 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
     }
 
     private void swipeUp() {
-        if (moveUp()){
+        if (moveUp()) {
             birthCell();
             checkGameOver();
         }
@@ -218,7 +217,7 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
         return false;
     }
 
-    public boolean moveUp(){
+    public boolean moveUp() {
         int cycles = 0;
         boolean madeMove = true;
         while (madeMove) {
@@ -292,10 +291,10 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
 
     private List<Integer> getUnusedCells() {
         final List<Integer> unusedCells = new ArrayList<>();
-        for (int y=0; y<boardSize; y++) {
-            for (int x=0; x<boardSize; x++) {
+        for (int y = 0; y < boardSize; y++) {
+            for (int x = 0; x < boardSize; x++) {
                 if (board[y][x] == 0) {
-                    unusedCells.add(y*boardSize + x);
+                    unusedCells.add(y * boardSize + x);
                 }
             }
         }
@@ -310,10 +309,10 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
         if (unusedCells.size() == 0) return;
 
         // pick random unused cell to birth
-        final int unusedCell = unusedCells.get(Util.getRandInt(0, unusedCells.size()-1));
+        final int unusedCell = unusedCells.get(Util.getRandInt(0, unusedCells.size() - 1));
         final int y = unusedCell / boardSize;
         final int x = unusedCell % boardSize;
-        board[y][x] = (Util.getRandInt(0,3) == 0)? 4 : 2;
+        board[y][x] = (Util.getRandInt(0, 3) == 0) ? 4 : 2;
     }
 
     private boolean isCoordinateOutOfBounds(final int y, final int x) {
@@ -335,8 +334,8 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
             return;
         }
 
-        for (int y=0; y<boardSize; y++) {
-            for (int x=0; x<boardSize; x++) {
+        for (int y = 0; y < boardSize; y++) {
+            for (int x = 0; x < boardSize; x++) {
                 if (similarNeighbour(y, x)) {
                     return;
                 }
@@ -351,7 +350,7 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
         final int[] deltaY = {-1, 1, 0, 0};
         final int[] deltaX = {0, 0, -1, 1};
 
-        for (int i=0; i<deltaY.length; i++) {
+        for (int i = 0; i < deltaY.length; i++) {
             final int neighbourY = y + deltaY[i];
             final int neighbourX = x + deltaX[i];
 
@@ -370,6 +369,8 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
     private void gameOver() {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle("GAME OVER");
+
+        alert.setCancelable(false);
 
         alert.setPositiveButton("Restart", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
