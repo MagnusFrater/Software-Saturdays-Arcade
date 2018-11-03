@@ -29,6 +29,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.softwaresaturdays.app.arcade.MyApplication;
 import com.softwaresaturdays.app.arcade.R;
+import com.softwaresaturdays.app.arcade.activities.games.TicTacToe;
 import com.softwaresaturdays.app.arcade.activities.games.TwentyFortyEight;
 import com.softwaresaturdays.app.arcade.adapters.ChatAdapter;
 import com.softwaresaturdays.app.arcade.adapters.GameAdapter;
@@ -218,8 +219,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     private void setupGamesList() {
         mGamesPlayable.put("2048", new Game("2048", TwentyFortyEight.class));
+        mGamesPlayable.put("Tic Tac Toe", new Game("Tic Tac Toe", TicTacToe.class));
 
-        mGamesUnderConstruction.add(new Game("Tic Tac Toe"));
         mGamesUnderConstruction.add(new Game("Pac Man"));
         mGamesUnderConstruction.add(new Game("Hang Man"));
         mGamesUnderConstruction.add(new Game("Flappy Bird"));
