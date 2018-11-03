@@ -14,12 +14,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
-import com.softwaresaturdays.app.arcade.MyApplication;
 import com.softwaresaturdays.app.arcade.R;
 import com.softwaresaturdays.app.arcade.activities.ChatActivity;
 import com.softwaresaturdays.app.arcade.activities.GameActivity;
 import com.softwaresaturdays.app.arcade.listeners.OnSwipeListener;
-import com.softwaresaturdays.app.arcade.networkHelpers.DatabaseHelper;
 import com.softwaresaturdays.app.arcade.utilities.Util;
 
 import java.util.ArrayList;
@@ -382,21 +380,13 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
 
         alert.setNegativeButton("Back to chat", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
+                // Record the score - Calling superclass method
                 recordScore(mScore, "2048");
                 startActivity(new Intent(getApplicationContext(), ChatActivity.class));
             }
         });
 
         alert.show();
-    }
-
-    @Override
-    public void recordScore(int score, String game) {
-        // check and update user's high mScore for the game
-        MyApplication.currUser.checkAndUpdateHighScore(game, score);
-        DatabaseHelper.uploadUserInfo(MyApplication.currUser);
-
-        // check and update game's high mScore
     }
 }
 
