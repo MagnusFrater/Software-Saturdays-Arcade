@@ -254,7 +254,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     private void fetchAndShowGameInfo(Game game) {
         mRlGameInfo.setVisibility(View.VISIBLE);
-        mTvLeaderboard.setText(game.getTitle() + " Leaderboard: UNAVAILABLE");
+        if (MyApplication.currUser.getHighScores() != null && MyApplication.currUser.getHighScores().get(game.getTitle()) != null) {
+            mTvLeaderboard.setText("Your high score: " + MyApplication.currUser.getHighScores().get(game.getTitle()));
+        } else {
+            mTvLeaderboard.setText("Your high score: UNAVAILABLE");
+        }
     }
 
     private void setupChatList() {
