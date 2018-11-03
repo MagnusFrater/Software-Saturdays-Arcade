@@ -30,7 +30,6 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
     private GestureDetector gestureDetector;
 
     private int[][] board;
-    private final int boardSize = 4;
     private int score;
 
     @SuppressLint("ClickableViewAccessibility")
@@ -83,7 +82,7 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
     }
 
     private void resetGame() {
-        board = new int[boardSize][boardSize];
+        board = new int[4][4];
         birthCell();
         updateScore(0);
         populateBoardView();
@@ -92,8 +91,8 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
     private void populateBoardView() {
         glBoard.removeAllViews();
 
-        for (int y=0; y<boardSize; y++) {
-            for (int x=0; x<boardSize; x++) {
+        for (int y=0; y<board.length; y++) {
+            for (int x=0; x<board.length; x++) {
                 final TextView tvCell = new TextView(this);
                 tvCell.setBackgroundColor(getCellBackgroundColor(board[y][x])); // hex color 0xAARRGGBB
 
@@ -224,8 +223,8 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
         while (madeMove) {
             madeMove = false;
 
-            for (int x = 0; x < boardSize; x++) {
-                for (int y = 0; y < boardSize; y++) {
+            for (int x = 0; x < board.length; x++) {
+                for (int y = 0; y < board.length; y++) {
                     madeMove = moveTo(x, y, x - 1, y) || madeMove;
                 }
             }
@@ -242,8 +241,8 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
         while (madeMove) {
             madeMove = false;
 
-            for (int x = boardSize - 1; x >= 0; x--) {
-                for (int y = 0; y < boardSize; y++) {
+            for (int x = board.length - 1; x >= 0; x--) {
+                for (int y = 0; y < board.length; y++) {
                     madeMove = moveTo(x, y, x + 1, y) || madeMove;
                 }
             }
@@ -260,8 +259,8 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
         while (madeMove) {
             madeMove = false;
 
-            for (int x = 0; x < boardSize; x++) {
-                for (int y = boardSize - 1; y >= 0; y--) {
+            for (int x = 0; x < board.length; x++) {
+                for (int y = board.length - 1; y >= 0; y--) {
                     madeMove = moveTo(x, y, x, y + 1) || madeMove;
                 }
             }
@@ -278,8 +277,8 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
         while (madeMove) {
             madeMove = false;
 
-            for (int x = 0; x < boardSize; x++) {
-                for (int y = 0; y < boardSize; y++) {
+            for (int x = 0; x < board.length; x++) {
+                for (int y = 0; y < board.length; y++) {
                     madeMove = moveTo(x, y, x, y - 1) || madeMove;
                 }
             }
@@ -292,10 +291,10 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
 
     private List<Integer> getUnusedCells() {
         final List<Integer> unusedCells = new ArrayList<>();
-        for (int y=0; y<boardSize; y++) {
-            for (int x=0; x<boardSize; x++) {
+        for (int y=0; y<board.length; y++) {
+            for (int x=0; x<board.length; x++) {
                 if (board[y][x] == 0) {
-                    unusedCells.add(y*boardSize + x);
+                    unusedCells.add(y*board.length + x);
                 }
             }
         }
@@ -311,13 +310,13 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
 
         // pick random unused cell to birth
         final int unusedCell = unusedCells.get(Util.getRandInt(0, unusedCells.size()-1));
-        final int y = unusedCell / boardSize;
-        final int x = unusedCell % boardSize;
+        final int y = unusedCell / board.length;
+        final int x = unusedCell % board.length;
         board[y][x] = (Util.getRandInt(0,3) == 0)? 4 : 2;
     }
 
     private boolean isCoordinateOutOfBounds(final int y, final int x) {
-        return y < 0 || y > boardSize - 1 || x < 0 || x > boardSize - 1;
+        return y < 0 || y > board.length - 1 || x < 0 || x > board.length - 1;
     }
 
     private void updateScore(final int update) {
@@ -335,8 +334,8 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
             return;
         }
 
-        for (int y=0; y<boardSize; y++) {
-            for (int x=0; x<boardSize; x++) {
+        for (int y=0; y<board.length; y++) {
+            for (int x=0; x<board.length; x++) {
                 if (similarNeighbour(y, x)) {
                     return;
                 }
