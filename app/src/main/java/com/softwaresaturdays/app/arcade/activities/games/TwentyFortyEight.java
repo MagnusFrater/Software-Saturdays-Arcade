@@ -12,7 +12,6 @@ import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.softwaresaturdays.app.arcade.R;
@@ -30,7 +29,7 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
     private GestureDetector gestureDetector;
 
     private int[][] board;
-    private int score;
+    private int mScore;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -41,7 +40,7 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
         findViewById(R.id.clLayout).setOnTouchListener(this);
 
         glBoard = findViewById(R.id.glBoard);
-        gestureDetector = new GestureDetector(this,new OnSwipeListener(){
+        gestureDetector = new GestureDetector(this, new OnSwipeListener() {
 
             @Override
             public boolean onSwipe(Direction direction) {
@@ -96,12 +95,12 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
                 final TextView tvCell = new TextView(this);
                 tvCell.setBackgroundColor(getCellBackgroundColor(board[y][x])); // hex color 0xAARRGGBB
 
-                final int size = (int)Util.convertDpToPixel(80, this);
-                final int margin = (int)Util.convertDpToPixel(8, this);
+                final int size = (int) Util.convertDpToPixel(80, this);
+                final int margin = (int) Util.convertDpToPixel(8, this);
                 final ActionBar.LayoutParams params = new ActionBar.LayoutParams(size, size);
                 params.setMargins(
-                        (x == 0)? margin : 0,
-                        (y == 0)? margin : 0,
+                        (x == 0) ? margin : 0,
+                        (y == 0) ? margin : 0,
                         margin,
                         margin
                 );
@@ -111,7 +110,7 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
                 tvCell.setGravity(Gravity.CENTER);
                 tvCell.setTypeface(null, Typeface.BOLD);
                 tvCell.setTextColor(getCellTextColor(board[y][x]));
-                tvCell.setText(((board[y][x] > 0)? String.valueOf(board[y][x]) : ""));
+                tvCell.setText(((board[y][x] > 0) ? String.valueOf(board[y][x]) : ""));
 
                 glBoard.addView(tvCell);
             }
@@ -160,7 +159,7 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
     }
 
     private void swipeUp() {
-        if (moveUp()){
+        if (moveUp()) {
             birthCell();
             checkGameOver();
         }
@@ -217,7 +216,7 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
         return false;
     }
 
-    public boolean moveUp(){
+    public boolean moveUp() {
         int cycles = 0;
         boolean madeMove = true;
         while (madeMove) {
@@ -321,12 +320,12 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
 
     private void updateScore(final int update) {
         if (update == 0) {
-            score = 0;
+            mScore = 0;
         } else {
-            score += update;
+            mScore += update;
         }
 
-        ((TextView) findViewById(R.id.tvScore)).setText(String.valueOf(score));
+        ((TextView) findViewById(R.id.tvScore)).setText(String.valueOf(mScore));
     }
 
     private void checkGameOver() {
@@ -350,7 +349,7 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
         final int[] deltaY = {-1, 1, 0, 0};
         final int[] deltaX = {0, 0, -1, 1};
 
-        for (int i=0; i<deltaY.length; i++) {
+        for (int i = 0; i < deltaY.length; i++) {
             final int neighbourY = y + deltaY[i];
             final int neighbourX = x + deltaX[i];
 
@@ -370,6 +369,8 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle("GAME OVER");
 
+        alert.setCancelable(false);
+
         alert.setPositiveButton("Restart", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 resetGame();
@@ -378,6 +379,8 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
 
         alert.setNegativeButton("Back to chat", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
+                // Record the score - Calling superclass method
+                recordScore(mScore, "2048");
                 startActivity(new Intent(getApplicationContext(), ChatActivity.class));
             }
         });

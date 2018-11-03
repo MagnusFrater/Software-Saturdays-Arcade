@@ -12,17 +12,20 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
+import com.softwaresaturdays.app.arcade.MyApplication;
 import com.softwaresaturdays.app.arcade.models.GifMessage;
 import com.softwaresaturdays.app.arcade.models.Message;
 import com.softwaresaturdays.app.arcade.models.TextMessage;
 import com.softwaresaturdays.app.arcade.models.User;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DatabaseHelper {
 
     public static final String KEY_USERS = "users";
     public static final String KEY_MESSAGES = "messages";
+    public static final String KEY_GAMES = "games";
     private static final String TAG = "DATABASE_HELPER:";
 
     public static void uploadUserInfo(User user) {
@@ -133,6 +136,17 @@ public class DatabaseHelper {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference colRef = db.collection(KEY_MESSAGES);
         colRef.document(mSelectedMessage.getTimestamp() + "").delete();
+    }
+
+    public static void updateGameHighScore(String game, int score) {
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference colRef = db.collection(KEY_GAMES);
+
+//        HashMap<String, String> top1 = new HashMap<>();
+//        top1.put("uid", MyApplication.currUser.getUid());
+//        top1.put("score", score + "");
+//
+//        colRef.document(game).set(top1);
     }
 
     public interface OnDatabaseFetchListener {

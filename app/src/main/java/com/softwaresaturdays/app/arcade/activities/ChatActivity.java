@@ -80,6 +80,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         subscribeToNotifications();
     }
 
+    // Refresh the recycler view with updated messages
     private void refreshRecyclerView(ArrayList<Message> messages) {
         // Update messages REAL-TIME and update list view
         mMessages = messages;
@@ -91,7 +92,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onLongClick(Message message, View v) {
-                // Long click on message
+                // Long click on message enables a popup to let users delete the message
                 if (message.getUserId().equals(MyApplication.currUser.getUid())) {
                     PopupMenu popupMenu = new PopupMenu(ChatActivity.this, v);
                     popupMenu.setOnMenuItemClickListener(ChatActivity.this);
@@ -110,7 +111,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         mLayoutManager.scrollToPosition(mChatAdapter.getItemCount() - 1);
     }
 
-
+    // Subscribe to the topic "arcade", all notifications are sent users subscribed to the topic "arcade"
     private void subscribeToNotifications() {
         FirebaseMessaging.getInstance().subscribeToTopic("arcade");
     }
@@ -121,10 +122,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public View onCreateView(String name, Context context, AttributeSet attrs) {
+        // Used to make sure the view contents move up when soft keyboard comes up
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         return super.onCreateView(name, context, attrs);
     }
 
+    // Fetch the next 12 messages and then refresh the recycler view
     void refreshChatList() {
         mLimit += 12;
         DatabaseHelper.fetchMessages(mLimit, new DatabaseHelper.OnDatabaseFetchListener() {
@@ -142,6 +145,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         final Toolbar mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
+        // Link Java code variables to UI elements
         mRvChat = findViewById(R.id.rvChat);
         mRvGames = findViewById(R.id.rvGames);
         mRlGameInfo = findViewById(R.id.rlGameInfo);
@@ -152,6 +156,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         CardView cvPlayButton = findViewById(R.id.cvPlayButton);
         mSwipeContainer = findViewById(R.id.swipeContainer);
 
+        // Needed to set global state - used to check that notifications are not displayed when app is foreground
         MyApplication.isForeground = true;
 
         // Setup refresh listener which triggers new data loading
@@ -159,8 +164,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onRefresh() {
                 // Your code to refresh the list here.
-                // Make sure you call swipeContainer.setRefreshing(false)
-                // once the network request has completed successfully.
                 mSwipeContainer.setRefreshing(false);
                 refreshChatList();
             }
@@ -172,10 +175,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-
+        // Assert throws error if condition is not true. Good for debugging
         assert MyApplication.currUser != null;
-
-        mIvProfile.setImageResource(R.drawable.gif);
 
         // Load profile pic using Glide
         Glide.with(this).load(MyApplication.currUser.getPhotoUrl()).into(mIvProfile);
@@ -183,7 +184,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         // Game info only visible when clicked on a game
         mRlGameInfo.setVisibility(View.GONE);
 
-
+        // Set clicklisteners to the activity so all onClick callbacks are together
         cvPlayButton.setOnClickListener(this);
         ivSend.setOnClickListener(this);
         mEtTextMessage.setOnClickListener(this);
@@ -200,7 +201,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void afterTextChanged(Editable s) {
+                // If a text entered is more than 2 letters, show GIF icon to allow gif adding
                 if (s.length() > 2) {
+                    // Show GIF icon
                     Glide.with(ChatActivity.this).load(R.drawable.gif).into(mIvProfile);
                     mIsGifButton = true;
                 } else {
@@ -252,7 +255,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     private void fetchAndShowGameInfo(Game game) {
         mRlGameInfo.setVisibility(View.VISIBLE);
-        mTvLeaderboard.setText(game.getTitle() + " Leaderboard: UNAVAILABLE");
+        if (MyApplication.currUser.getHighScores() != null && MyApplication.currUser.getHighScores().get(game.getTitle()) != null) {
+            mTvLeaderboard.setText("Your high score: " + MyApplication.currUser.getHighScores().get(game.getTitle()));
+        } else {
+            mTvLeaderboard.setText("Your high score: UNAVAILABLE");
+        }
     }
 
     private void setupChatList() {

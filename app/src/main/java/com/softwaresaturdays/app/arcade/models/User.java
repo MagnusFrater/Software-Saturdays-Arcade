@@ -2,12 +2,15 @@ package com.softwaresaturdays.app.arcade.models;
 
 import android.net.Uri;
 
+import java.util.HashMap;
+
 public class User {
     private String email;
     private String name;
     private String photoUrl;
     private String uid;
     private String fcmToken;
+    private HashMap<String, Double> highScores;
 
     public User() {
 
@@ -18,6 +21,7 @@ public class User {
         this.name = displayName;
         this.photoUrl = photoUrl.toString();
         this.uid = uid;
+        this.highScores = new HashMap<>();
     }
 
     public String getEmail() {
@@ -46,6 +50,14 @@ public class User {
 
     public String toString() {
         return name + "," + uid + "," + photoUrl + "," + email + "," + fcmToken;
+    }
+
+    public void checkAndUpdateHighScore(String game, double score) {
+        highScores.put(game, score);
+    }
+
+    public HashMap<String, Double> getHighScores() {
+        return this.highScores;
     }
 
     public User(String hashcode) {
