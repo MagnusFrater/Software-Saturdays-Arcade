@@ -12,14 +12,15 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
-import com.softwaresaturdays.app.arcade.MyApplication;
+import com.softwaresaturdays.app.arcade.models.Game;
 import com.softwaresaturdays.app.arcade.models.GifMessage;
 import com.softwaresaturdays.app.arcade.models.Message;
 import com.softwaresaturdays.app.arcade.models.TextMessage;
 import com.softwaresaturdays.app.arcade.models.User;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+
+import javax.annotation.Nullable;
 
 public class DatabaseHelper {
 
@@ -138,15 +139,44 @@ public class DatabaseHelper {
         colRef.document(mSelectedMessage.getTimestamp() + "").delete();
     }
 
-    public static void updateGameHighScore(String game, int score) {
+    public static void updateGameHighScore(Game updatedGame) {
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference docRef = db.collection(KEY_GAMES).document(updatedGame.getTitle());
+
+        docRef.set(updatedGame, SetOptions.merge());
+    }
+
+    public static void getGameHighScores(final onGamesFetchListener listener) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference colRef = db.collection(KEY_GAMES);
 
-//        HashMap<String, String> top1 = new HashMap<>();
-//        top1.put("uid", MyApplication.currUser.getUid());
-//        top1.put("score", score + "");
-//
-//        colRef.document(game).set(top1);
+        colRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
+                    Log.d(TAG, "Current data: " + queryDocumentSnapshots.size() + " games");
+
+                    ArrayList<Game> games = new ArrayList<>();
+                    for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
+                        try {
+                            Game game = documentSnapshot.toObject(Game.class);
+                            games.add(game);
+                        } catch (Exception e2) {
+                            e2.printStackTrace();
+                        }
+                    }
+
+                    listener.onGamesFetched(games);
+
+                } else {
+                    Log.d(TAG, "Current data: null");
+                }
+            }
+        });
+    }
+
+    public interface onGamesFetchListener {
+        void onGamesFetched(ArrayList<Game> games);
     }
 
     public interface OnDatabaseFetchListener {

@@ -42,19 +42,17 @@ import com.softwaresaturdays.app.arcade.networkHelpers.NetworkHelper;
 import com.softwaresaturdays.app.arcade.utilities.Util;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class ChatActivity extends AppCompatActivity implements View.OnClickListener, PopupMenu.OnMenuItemClickListener {
 
     private RecyclerView mRvChat;
     private RecyclerView mRvGames;
     private ArrayList<Message> mMessages = new ArrayList<>();
-    private HashMap<String, Game> mGamesPlayable = new HashMap<>();
-    private ArrayList<Game> mGamesUnderConstruction = new ArrayList<>();
+    private ArrayList<Game> mAllGames = new ArrayList<>();
     private ChatAdapter mChatAdapter;
     private GameAdapter mGameAdapter;
     private RelativeLayout mRlGameInfo;
-    private TextView mTvLeaderboard;
+    private TextView mTvUserHighScore;
     private boolean mIsGifButton;
     private RoundedImageView mIvProfile;
     private Game mSelectedGame;
@@ -72,7 +70,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         DatabaseHelper.fetchMessages(mLimit, new DatabaseHelper.OnDatabaseFetchListener() {
             @Override
             public void onMessagesFetched(ArrayList<Message> messages) {
-                refreshRecyclerView(messages);
+                refreshChatList(messages);
                 scrollToEnd();
             }
         });
@@ -81,7 +79,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     // Refresh the recycler view with updated messages
-    private void refreshRecyclerView(ArrayList<Message> messages) {
+    private void refreshChatList(ArrayList<Message> messages) {
         // Update messages REAL-TIME and update list view
         mMessages = messages;
         mChatAdapter = new ChatAdapter(ChatActivity.this, mMessages, new ChatAdapter.OnItemClickListener() {
@@ -133,7 +131,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         DatabaseHelper.fetchMessages(mLimit, new DatabaseHelper.OnDatabaseFetchListener() {
             @Override
             public void onMessagesFetched(ArrayList<Message> messages) {
-                refreshRecyclerView(messages);
+                refreshChatList(messages);
             }
         });
     }
@@ -149,7 +147,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         mRvChat = findViewById(R.id.rvChat);
         mRvGames = findViewById(R.id.rvGames);
         mRlGameInfo = findViewById(R.id.rlGameInfo);
-        mTvLeaderboard = findViewById(R.id.tvLeaderboard);
+        mTvUserHighScore = findViewById(R.id.tvUserHighScore);
         ImageView ivSend = findViewById(R.id.ivSend);
         mIvProfile = findViewById(R.id.ivProfile);
         mEtTextMessage = findViewById(R.id.etTextMessage);
@@ -166,6 +164,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 // Your code to refresh the list here.
                 mSwipeContainer.setRefreshing(false);
                 refreshChatList();
+                refreshGamesList();
             }
         });
 
@@ -220,18 +219,48 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         setupGamesList();
     }
 
+    private void refreshGamesList() {
+        DatabaseHelper.getGameHighScores(new DatabaseHelper.onGamesFetchListener() {
+            @Override
+            public void onGamesFetched(ArrayList<Game> games) {
+                // Add all latest game data to mAllGames
+                mAllGames.addAll(games);
+
+                // Add extra games under construction
+                mAllGames.add(new Game("Pac Man"));
+                mAllGames.add(new Game("Hang Man"));
+                mAllGames.add(new Game("Flappy Bird"));
+
+                // Reset game adapter to update list view
+                mGameAdapter = new GameAdapter(ChatActivity.this, mAllGames, new GameAdapter.OnItemClickListener() {
+                    @Override
+                    public void onClick(Game game) {
+                        if (mRlGameInfo.getVisibility() == View.GONE || !mSelectedGame.getTitle().equals(game.getTitle())) {
+                            fetchAndShowGameInfo(game);
+                        } else {
+                            hidGameInfo();
+                        }
+
+                        // Clicked on Game
+                        mSelectedGame = game;
+                    }
+                });
+
+                if (mRvGames != null) {
+                    mRvGames.setAdapter(mGameAdapter);
+                }
+            }
+        });
+    }
+
     private void setupGamesList() {
-        mGamesPlayable.put("2048", new Game("2048", TwentyFortyEight.class));
-        mGamesPlayable.put("Tic Tac Toe", new Game("Tic Tac Toe", TicTacToe.class));
+        mAllGames.add(new Game("2048"));
+        mAllGames.add(new Game("TicTacToe"));
+        mAllGames.add(new Game("Pac Man"));
+        mAllGames.add(new Game("Hang Man"));
+        mAllGames.add(new Game("Flappy Bird"));
 
-        mGamesUnderConstruction.add(new Game("Pac Man"));
-        mGamesUnderConstruction.add(new Game("Hang Man"));
-        mGamesUnderConstruction.add(new Game("Flappy Bird"));
-
-        final ArrayList<Game> allGames = new ArrayList<>(mGamesPlayable.values());
-        allGames.addAll(mGamesUnderConstruction);
-
-        mGameAdapter = new GameAdapter(this, allGames, new GameAdapter.OnItemClickListener() {
+        mGameAdapter = new GameAdapter(this, mAllGames, new GameAdapter.OnItemClickListener() {
             @Override
             public void onClick(Game game) {
                 if (mRlGameInfo.getVisibility() == View.GONE || !mSelectedGame.getTitle().equals(game.getTitle())) {
@@ -256,10 +285,18 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private void fetchAndShowGameInfo(Game game) {
         mRlGameInfo.setVisibility(View.VISIBLE);
         if (MyApplication.currUser.getHighScores() != null && MyApplication.currUser.getHighScores().get(game.getTitle()) != null) {
-            mTvLeaderboard.setText("Your high score: " + MyApplication.currUser.getHighScores().get(game.getTitle()));
+            mTvUserHighScore.setText("Your high score: " + MyApplication.currUser.getHighScores().get(game.getTitle()));
         } else {
-            mTvLeaderboard.setText("Your high score: UNAVAILABLE");
+            mTvUserHighScore.setText("Your high score: UNAVAILABLE");
         }
+
+        TextView tvTop1 = findViewById(R.id.tvTop1);
+        TextView tvTop2 = findViewById(R.id.tvTop2);
+        TextView tvTop3 = findViewById(R.id.tvTop3);
+
+        tvTop1.setText(game.getTop1() + "");
+        tvTop2.setText(game.getTop2() + "");
+        tvTop3.setText(game.getTop3() + "");
     }
 
     private void setupChatList() {
@@ -295,15 +332,15 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         switch (id) {
             case R.id.cvPlayButton:
                 if (mSelectedGame != null) {
-                    if (mGamesPlayable.containsKey(mSelectedGame.getTitle())) {
-                        final Class cls = mGamesPlayable.get(mSelectedGame.getTitle()).getCls();
-                        if (cls != null) {
-                            startActivity(new Intent(getApplicationContext(), cls));
-                        } else {
-                            Snackbar.make(mRvChat, "Game activity doesn't exist for: " + mSelectedGame.getTitle(), Snackbar.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        Snackbar.make(mRvChat, mSelectedGame.getTitle() + " is Under construction", Snackbar.LENGTH_SHORT).show();
+                    switch (mSelectedGame.getTitle()) {
+                        case "2048":
+                            startActivity(new Intent(getApplicationContext(), TwentyFortyEight.class));
+                            break;
+                        case "TicTacToe":
+                            startActivity(new Intent(getApplicationContext(), TicTacToe.class));
+                            break;
+                        default:
+                            Snackbar.make(mRvChat, mSelectedGame.getTitle() + " is Under construction", Snackbar.LENGTH_SHORT).show();
                     }
                 }
                 break;
@@ -365,6 +402,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
         }
+
     }
 
     @Override

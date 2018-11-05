@@ -47,19 +47,100 @@
                     android:background="@color/colorPrimary"
                     android:visibility="gone">
 
-                    <TextView
-                        android:id="@+id/tvLeaderboard"
+                    <LinearLayout
+                        android:id="@+id/llLeaderboard"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:padding="16dp"
-                        android:text="LEADERBOARD: NOUKNJKNKNK" />
+                        android:orientation="horizontal"
+                        android:paddingTop="16dp">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="16dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:fontFamily="sans-serif-medium"
+                                android:text="RANK 1" />
+
+                            <TextView
+                                android:id="@+id/tvTop1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="35" />
+
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="16dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:fontFamily="sans-serif-medium"
+                                android:text="RANK 2" />
+
+                            <TextView
+                                android:id="@+id/tvTop2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="25" />
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:fontFamily="sans-serif-medium"
+                                android:text="RANK 3" />
+
+                            <TextView
+                                android:id="@+id/tvTop3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="10" />
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvUserHighScore"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/llLeaderboard"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:text="Your high score: 0" />
 
                     <android.support.v7.widget.CardView
                         android:id="@+id/cvPlayButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/tvLeaderboard"
+                        android:layout_below="@+id/tvUserHighScore"
                         android:layout_centerHorizontal="true"
                         android:layout_margin="10dp"
                         android:foreground="?attr/selectableItemBackground"

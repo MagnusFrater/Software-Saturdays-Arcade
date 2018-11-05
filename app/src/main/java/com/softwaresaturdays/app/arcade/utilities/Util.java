@@ -8,6 +8,7 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.softwaresaturdays.app.arcade.models.Game;
 import com.softwaresaturdays.app.arcade.models.User;
 
 import java.text.SimpleDateFormat;
@@ -51,6 +52,24 @@ public class Util {
         editor.apply();
     }
 
+    public static void storeGameData(ArrayList<Game> games, Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREF, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        for (Game game : games) {
+            editor.putString(game.getTitle(), game.toString());
+        }
+
+        editor.apply();
+    }
+
+    public static Game getGameData(String gameTitle, Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREF, Context.MODE_PRIVATE);
+
+        return new Game(prefs.getString(gameTitle, ""));
+    }
+
+
     public static User getUserData(String uid, Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREF, Context.MODE_PRIVATE);
 
@@ -61,9 +80,9 @@ public class Util {
         return random.nextInt((max - min) + 1) + min;
     }
 
-    public static float convertDpToPixel(final float dp, final Context context){
+    public static float convertDpToPixel(final float dp, final Context context) {
         final Resources resources = context.getResources();
         final DisplayMetrics metrics = resources.getDisplayMetrics();
-        return dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        return dp * ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
     }
 }

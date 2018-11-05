@@ -52,7 +52,7 @@ public class User {
         return name + "," + uid + "," + photoUrl + "," + email + "," + fcmToken;
     }
 
-    public void checkAndUpdateHighScore(String game, double score) {
+    public void checkAndUpdateUserHighScore(String game, double score) {
         highScores.put(game, score);
     }
 
