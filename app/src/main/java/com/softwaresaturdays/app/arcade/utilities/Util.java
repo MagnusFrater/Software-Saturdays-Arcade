@@ -66,4 +66,14 @@ public class Util {
         final DisplayMetrics metrics = resources.getDisplayMetrics();
         return dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
     }
+
+    public static String generateRandomCode(final int length) {
+        String s = "";
+
+        for (int i=0; i<length; i++) {
+            s += String.valueOf(getRandInt(0, 9));
+        }
+
+        return s;
+    }
 }

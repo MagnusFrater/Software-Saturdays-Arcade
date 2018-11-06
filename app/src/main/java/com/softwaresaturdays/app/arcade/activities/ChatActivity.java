@@ -221,8 +221,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setupGamesList() {
-        mGamesPlayable.put("2048", new Game("2048", TwentyFortyEight.class));
-        mGamesPlayable.put("Tic Tac Toe", new Game("Tic Tac Toe", TicTacToe.class));
+        mGamesPlayable.put("2048", new Game("2048", TwentyFortyEight.class, Game.GAME_TYPE.local));
+        mGamesPlayable.put("Tic Tac Toe", new Game("Tic Tac Toe", TicTacToe.class, Game.GAME_TYPE.turn_based_multiplayer));
 
         mGamesUnderConstruction.add(new Game("Pac Man"));
         mGamesUnderConstruction.add(new Game("Hang Man"));
@@ -296,7 +296,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.cvPlayButton:
                 if (mSelectedGame != null) {
                     if (mGamesPlayable.containsKey(mSelectedGame.getTitle())) {
-                        mGamesPlayable.get(mSelectedGame.getTitle()).go(this);
+                        mGamesPlayable.get(mSelectedGame.getTitle()).startGame(this);
                     } else {
                         Snackbar.make(mRvChat, mSelectedGame.getTitle() + " is Under construction", Snackbar.LENGTH_SHORT).show();
                     }
