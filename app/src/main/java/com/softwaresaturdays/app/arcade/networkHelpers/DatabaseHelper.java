@@ -12,15 +12,17 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
+import com.softwaresaturdays.app.arcade.MyApplication;
 import com.softwaresaturdays.app.arcade.models.GifMessage;
 import com.softwaresaturdays.app.arcade.models.Message;
 import com.softwaresaturdays.app.arcade.models.TextMessage;
-import com.softwaresaturdays.app.arcade.models.TurnBasedMultiplayerGame;
 import com.softwaresaturdays.app.arcade.models.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.annotation.Nullable;
 
 public class DatabaseHelper {
 
@@ -155,19 +157,39 @@ public class DatabaseHelper {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // delete any currently existing game of this type tied to this user
-        // TODO
+        db.collection(KEY_USERS).document(MyApplication.currUser.getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (!documentSnapshot.contains(KEY_SESSIONS) || !(documentSnapshot.get(KEY_SESSIONS) instanceof Map)) {
+                    return;
+                }
 
-        // create game session
-        db.collection(KEY_GAMES).document(gameTitle).collection(KEY_SESSIONS).document(hostCode).set(data);
+                // get current ongoing game's gameCode
+                final Map<String, String> sessions = (Map<String, String>) documentSnapshot.get(KEY_SESSIONS);
+                if (!sessions.containsKey(gameTitle)) {
+                    return;
+                }
+                final String currentGameCode = sessions.get(gameTitle);
 
-        // tie new game to user's profile
-        // TODO
-    }
+                // delete old game
+                db.collection(KEY_GAMES).document(gameTitle).collection(KEY_SESSIONS).document(currentGameCode).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // create game session
+                        db.collection(KEY_GAMES).document(gameTitle).collection(KEY_SESSIONS).document(hostCode).set(data);
 
-    public static void deleteTurnBasedGame(final String gameTitle, final String hostCode) {
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        // tie new game to user's profile
+                        final Map<String, String> session = new HashMap<>();
+                        session.put(gameTitle, hostCode);
 
-        db.collection(KEY_GAMES).document(gameTitle).collection(KEY_SESSIONS).document(hostCode).delete();
+                        final Map<String, Map> update = new HashMap<>();
+                        update.put("sessions", session);
+
+                        db.collection(KEY_USERS).document(MyApplication.currUser.getUid()).set(update, SetOptions.merge());
+                    }
+                });
+            }
+        });
     }
 
     public interface OnDatabaseFetchListener {
