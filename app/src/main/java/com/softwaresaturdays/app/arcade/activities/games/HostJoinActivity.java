@@ -11,6 +11,7 @@ import android.view.KeyEvent;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.softwaresaturdays.app.arcade.MyApplication;
 import com.softwaresaturdays.app.arcade.R;
 import com.softwaresaturdays.app.arcade.models.TurnBasedMultiplayerGame;
 import com.softwaresaturdays.app.arcade.networkHelpers.DatabaseHelper;
@@ -59,9 +60,10 @@ public class HostJoinActivity extends AppCompatActivity {
         });
 
         // initialize turn based game
-        final Map<String, String> data = new HashMap<>();
+        final Map<String, Object> data = new HashMap<>();
         data.put("board", "0,0,0,0,0,0,0,0,0");
         data.put("state", TurnBasedMultiplayerGame.STATE.INIT.name());
+        data.put("host", MyApplication.currUser.getUid());
         DatabaseHelper.initTurnBasedGame(gameTitle, hostCode, data);
     }
 

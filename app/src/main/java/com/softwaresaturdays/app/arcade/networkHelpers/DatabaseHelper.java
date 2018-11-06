@@ -153,43 +153,41 @@ public class DatabaseHelper {
 //        colRef.document(game).set(top1);
     }
 
-    public static void initTurnBasedGame(final String gameTitle, final String hostCode, final Map<String,String> data) {
+    public static void initTurnBasedGame(final String gameTitle, final String hostCode, final Map<String, Object> data) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // delete any currently existing game of this type tied to this user
-        db.collection(KEY_USERS).document(MyApplication.currUser.getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        db.collection(KEY_USERS).document(MyApplication.currUser.getUid()).collection(KEY_SESSIONS).document(gameTitle).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (!documentSnapshot.contains(KEY_SESSIONS) || !(documentSnapshot.get(KEY_SESSIONS) instanceof Map)) {
+                if (!documentSnapshot.contains("code")) {
+                    createTurnBasedGameSession(gameTitle, hostCode, data);
                     return;
                 }
+                final String currentGameCode = documentSnapshot.getString("code");
 
-                // get current ongoing game's gameCode
-                final Map<String, String> sessions = (Map<String, String>) documentSnapshot.get(KEY_SESSIONS);
-                if (!sessions.containsKey(gameTitle)) {
-                    return;
-                }
-                final String currentGameCode = sessions.get(gameTitle);
-
-                // delete old game
                 db.collection(KEY_GAMES).document(gameTitle).collection(KEY_SESSIONS).document(currentGameCode).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        // create game session
-                        db.collection(KEY_GAMES).document(gameTitle).collection(KEY_SESSIONS).document(hostCode).set(data);
-
-                        // tie new game to user's profile
-                        final Map<String, String> session = new HashMap<>();
-                        session.put(gameTitle, hostCode);
-
-                        final Map<String, Map> update = new HashMap<>();
-                        update.put("sessions", session);
-
-                        db.collection(KEY_USERS).document(MyApplication.currUser.getUid()).set(update, SetOptions.merge());
+                        createTurnBasedGameSession(gameTitle, hostCode, data);
                     }
                 });
             }
         });
+    }
+
+    private static void createTurnBasedGameSession(final String gameTitle, final String hostCode, final Map<String, Object> data) {
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // create game session
+        db.collection(KEY_GAMES).document(gameTitle).collection(KEY_SESSIONS).document(hostCode).set(data);
+
+        // tie new game to user's profile
+        final Map<String, Object> session = new HashMap<>();
+        session.put("code", hostCode);
+        session.put("host", true);
+
+        db.collection(KEY_USERS).document(MyApplication.currUser.getUid()).collection(KEY_SESSIONS).document(gameTitle).set(session, SetOptions.merge());
     }
 
     public interface OnDatabaseFetchListener {
