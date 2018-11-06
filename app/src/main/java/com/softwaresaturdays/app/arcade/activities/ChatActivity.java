@@ -37,6 +37,7 @@ import com.softwaresaturdays.app.arcade.models.Game;
 import com.softwaresaturdays.app.arcade.models.GifMessage;
 import com.softwaresaturdays.app.arcade.models.Message;
 import com.softwaresaturdays.app.arcade.models.TextMessage;
+import com.softwaresaturdays.app.arcade.models.TurnBasedMultiplayerGame;
 import com.softwaresaturdays.app.arcade.networkHelpers.DatabaseHelper;
 import com.softwaresaturdays.app.arcade.networkHelpers.NetworkHelper;
 import com.softwaresaturdays.app.arcade.utilities.Util;
@@ -221,8 +222,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setupGamesList() {
-        mGamesPlayable.put("2048", new Game("2048", TwentyFortyEight.class, Game.GAME_TYPE.local));
-        mGamesPlayable.put("Tic Tac Toe", new Game("Tic Tac Toe", TicTacToe.class, Game.GAME_TYPE.turn_based_multiplayer));
+        mGamesPlayable.put("2048", new Game("2048", TwentyFortyEight.class));
+        mGamesPlayable.put("Tic Tac Toe", new TurnBasedMultiplayerGame("Tic Tac Toe", TicTacToe.class));
 
         mGamesUnderConstruction.add(new Game("Pac Man"));
         mGamesUnderConstruction.add(new Game("Hang Man"));

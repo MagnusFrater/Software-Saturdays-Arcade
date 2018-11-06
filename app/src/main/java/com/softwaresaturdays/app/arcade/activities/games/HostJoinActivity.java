@@ -12,26 +12,31 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.softwaresaturdays.app.arcade.R;
+import com.softwaresaturdays.app.arcade.models.TurnBasedMultiplayerGame;
+import com.softwaresaturdays.app.arcade.networkHelpers.DatabaseHelper;
 import com.softwaresaturdays.app.arcade.utilities.Util;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class HostJoinActivity extends AppCompatActivity {
 
     private final int maxCodeLength = 5;
     private final String hostCode = Util.generateRandomCode(maxCodeLength);
 
-    private String game_title;
-    private Class game_class;
+    private String gameTitle;
+    private Class gameClass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_host_join);
 
-        game_title = getIntent().getStringExtra("game_title");
-        game_class = (Class) getIntent().getSerializableExtra("game_class");
+        gameTitle = getIntent().getStringExtra("game_title");
+        gameClass = (Class) getIntent().getSerializableExtra("game_class");
 
         // set game title && host code UI
-        ((TextView) findViewById(R.id.tvGameNameLabel)).setText(game_title);
+        ((TextView) findViewById(R.id.tvGameNameLabel)).setText(gameTitle);
         ((TextView) findViewById(R.id.tvHostCode)).setText(hostCode);
 
         final EditText etJoinCode = findViewById(R.id.etJoinCode);
@@ -52,6 +57,12 @@ public class HostJoinActivity extends AppCompatActivity {
                 // N/A
             }
         });
+
+        // initialize turn based game
+        final Map<String, String> data = new HashMap<>();
+        data.put("board", "0,0,0,0,0,0,0,0,0");
+        data.put("state", TurnBasedMultiplayerGame.STATE.INIT.name());
+        DatabaseHelper.initTurnBasedGame(gameTitle, hostCode, data);
     }
 
     private void joinGame(final String gameCode) {
@@ -66,6 +77,6 @@ public class HostJoinActivity extends AppCompatActivity {
             return;
         }
 
-        startActivity(new Intent(getApplicationContext(), game_class));
+        startActivity(new Intent(getApplicationContext(), gameClass));
     }
 }

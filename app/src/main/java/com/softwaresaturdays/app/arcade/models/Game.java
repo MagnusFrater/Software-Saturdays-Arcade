@@ -3,47 +3,32 @@ package com.softwaresaturdays.app.arcade.models;
 import android.app.Activity;
 import android.content.Intent;
 
-import com.softwaresaturdays.app.arcade.activities.games.HostJoinActivity;
-
 import java.util.HashMap;
 
 public class Game {
 
-    public enum GAME_TYPE {
-        local, turn_based_multiplayer
-    }
-
-    private String title;
-    private Class cls;
-    private GAME_TYPE gameType;
+    protected String title;
+    protected Class cls;
 
     private HashMap<String, String> top1;
     private HashMap<String, String> top2;
     private HashMap<String, String> top3;
 
     public Game() {
-        this("NO TITLE", null, GAME_TYPE.local);
+        this("NO TITLE", null);
     }
 
-    public Game(String title) {
-        this(title, null, GAME_TYPE.local);
+    public Game(final String title) {
+        this(title, null);
     }
 
-    public Game(final String title, final Class cls, final GAME_TYPE gameType) {
+    public Game(final String title, final Class cls) {
         this.title = title;
         this.cls = cls;
-        this.gameType = gameType;
     }
 
     public void startGame(final Activity activity) {
-        if (gameType == GAME_TYPE.turn_based_multiplayer) {
-            final Intent intent = new Intent(activity.getApplicationContext(), HostJoinActivity.class);
-            intent.putExtra("game_title", title);
-            intent.putExtra("game_class", cls);
-            activity.startActivity(intent);
-        } else {
-            activity.startActivity(new Intent(activity.getApplicationContext(), cls));
-        }
+        activity.startActivity(new Intent(activity.getApplicationContext(), cls));
     }
 
     public String getTitle() {
