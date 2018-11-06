@@ -296,12 +296,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.cvPlayButton:
                 if (mSelectedGame != null) {
                     if (mGamesPlayable.containsKey(mSelectedGame.getTitle())) {
-                        final Class cls = mGamesPlayable.get(mSelectedGame.getTitle()).getCls();
-                        if (cls != null) {
-                            startActivity(new Intent(getApplicationContext(), cls));
-                        } else {
-                            Snackbar.make(mRvChat, "Game activity doesn't exist for: " + mSelectedGame.getTitle(), Snackbar.LENGTH_SHORT).show();
-                        }
+                        mGamesPlayable.get(mSelectedGame.getTitle()).go(this);
                     } else {
                         Snackbar.make(mRvChat, mSelectedGame.getTitle() + " is Under construction", Snackbar.LENGTH_SHORT).show();
                     }

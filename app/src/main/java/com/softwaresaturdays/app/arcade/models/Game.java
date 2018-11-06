@@ -1,5 +1,8 @@
 package com.softwaresaturdays.app.arcade.models;
 
+import android.app.Activity;
+import android.content.Intent;
+
 import java.util.HashMap;
 
 public class Game {
@@ -20,6 +23,10 @@ public class Game {
     public Game(String title, Class cls) {
         this.title = title;
         this.cls = cls;
+    }
+
+    public void go(final Activity activity) {
+        activity.startActivity(new Intent(activity.getApplicationContext(), cls));
     }
 
     public String getTitle() {
