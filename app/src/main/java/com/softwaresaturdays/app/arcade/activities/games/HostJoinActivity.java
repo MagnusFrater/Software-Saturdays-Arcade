@@ -7,18 +7,27 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.softwaresaturdays.app.arcade.MyApplication;
 import com.softwaresaturdays.app.arcade.R;
+import com.softwaresaturdays.app.arcade.activities.ChatActivity;
 import com.softwaresaturdays.app.arcade.models.TurnBasedMultiplayerGame;
 import com.softwaresaturdays.app.arcade.networkHelpers.DatabaseHelper;
 import com.softwaresaturdays.app.arcade.utilities.Util;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.annotation.Nullable;
+
+import static com.softwaresaturdays.app.arcade.networkHelpers.DatabaseHelper.KEY_GAMES;
+import static com.softwaresaturdays.app.arcade.networkHelpers.DatabaseHelper.KEY_SESSIONS;
+import static com.softwaresaturdays.app.arcade.networkHelpers.DatabaseHelper.KEY_USERS;
 
 public class HostJoinActivity extends AppCompatActivity {
 
@@ -60,11 +69,84 @@ public class HostJoinActivity extends AppCompatActivity {
         });
 
         // initialize turn based game
-        final Map<String, Object> data = new HashMap<>();
-        data.put("board", "0,0,0,0,0,0,0,0,0");
-        data.put("state", TurnBasedMultiplayerGame.STATE.INIT.name());
-        data.put("host", MyApplication.currUser.getUid());
-        DatabaseHelper.initTurnBasedGame(gameTitle, hostCode, data);
+        DatabaseHelper.initTurnBasedGame(gameTitle, hostCode);
+
+        initListeners();
+    }
+
+    private void initListeners() {
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // listen for changes in pre-set-up host game
+        db.collection(KEY_GAMES).document(gameTitle).collection(KEY_SESSIONS).document(hostCode).addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.e("hostGame", "Listen failed: " + e);
+                    return;
+                }
+
+                if (documentSnapshot == null || !documentSnapshot.exists()) {
+                    Log.e("hostGame", "problem with snapshot");
+                    return;
+                }
+
+                if (!documentSnapshot.contains("state")) {
+                    Log.e("hostGame", "no game state??");
+                    return;
+                }
+
+                if (!documentSnapshot.get("state").equals(TurnBasedMultiplayerGame.STATE.INIT.name())) {
+                    startActivity(new Intent(getApplicationContext(), gameClass));
+                }
+            }
+        });
+
+        // listen for changes in game session saved to profile
+        db.collection(KEY_USERS).document(MyApplication.currUser.getUid()).collection(KEY_SESSIONS).document(gameTitle).addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.e("profile", "Listen failed: " + e);
+                    return;
+                }
+
+                if (documentSnapshot == null || !documentSnapshot.exists()) {
+                    Log.e("profile", "problem with snapshot");
+                    return;
+                }
+
+                if (!documentSnapshot.contains("code")) {
+                    Log.e("profile", "no game code??");
+                    return;
+                }
+
+                if (!documentSnapshot.contains("code")) {
+                    return;
+                }
+
+                final String savedGameCode = documentSnapshot.getString("code");
+
+                db.collection(KEY_GAMES).document(gameTitle).collection(KEY_SESSIONS).document(savedGameCode).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot == null || !documentSnapshot.exists()) {
+                            return;
+                        }
+
+                        if (!documentSnapshot.contains("state")) {
+                            return;
+                        }
+
+                        final String gameState = documentSnapshot.getString("state");
+                        if (!gameState.equals(TurnBasedMultiplayerGame.STATE.INIT.name())) {
+                            Log.e("profile", documentSnapshot.get("code") + " " + hostCode);
+                            startActivity(new Intent(getApplicationContext(), gameClass));
+                        }
+                    }
+                });
+            }
+        });
     }
 
     private void joinGame(final String gameCode) {
@@ -79,6 +161,6 @@ public class HostJoinActivity extends AppCompatActivity {
             return;
         }
 
-        startActivity(new Intent(getApplicationContext(), gameClass));
+        DatabaseHelper.joinTurnBasedGame(gameTitle, gameCode);
     }
 }

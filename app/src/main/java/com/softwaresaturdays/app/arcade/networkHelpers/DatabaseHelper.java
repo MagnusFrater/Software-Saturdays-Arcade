@@ -1,5 +1,7 @@
 package com.softwaresaturdays.app.arcade.networkHelpers;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -16,7 +18,9 @@ import com.softwaresaturdays.app.arcade.MyApplication;
 import com.softwaresaturdays.app.arcade.models.GifMessage;
 import com.softwaresaturdays.app.arcade.models.Message;
 import com.softwaresaturdays.app.arcade.models.TextMessage;
+import com.softwaresaturdays.app.arcade.models.TurnBasedMultiplayerGame;
 import com.softwaresaturdays.app.arcade.models.User;
+import com.softwaresaturdays.app.arcade.utilities.Util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -153,33 +157,39 @@ public class DatabaseHelper {
 //        colRef.document(game).set(top1);
     }
 
-    public static void initTurnBasedGame(final String gameTitle, final String hostCode, final Map<String, Object> data) {
+    public static void initTurnBasedGame(final String gameTitle, final String hostCode) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // delete any currently existing game of this type tied to this user
         db.collection(KEY_USERS).document(MyApplication.currUser.getUid()).collection(KEY_SESSIONS).document(gameTitle).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
+                // no old game to delete, create new one
                 if (!documentSnapshot.contains("code")) {
-                    createTurnBasedGameSession(gameTitle, hostCode, data);
+                    createTurnBasedGameSession(gameTitle, hostCode);
                     return;
                 }
+
                 final String currentGameCode = documentSnapshot.getString("code");
 
+                // upon successful old game deletion, create new one
                 db.collection(KEY_GAMES).document(gameTitle).collection(KEY_SESSIONS).document(currentGameCode).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        createTurnBasedGameSession(gameTitle, hostCode, data);
+                        createTurnBasedGameSession(gameTitle, hostCode);
                     }
                 });
             }
         });
     }
 
-    private static void createTurnBasedGameSession(final String gameTitle, final String hostCode, final Map<String, Object> data) {
+    private static void createTurnBasedGameSession(final String gameTitle, final String hostCode) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // create game session
+        final Map<String, Object> data = new HashMap<>();
+        data.put("state", TurnBasedMultiplayerGame.STATE.INIT.name());
+        data.put("host", MyApplication.currUser.getUid());
         db.collection(KEY_GAMES).document(gameTitle).collection(KEY_SESSIONS).document(hostCode).set(data);
 
         // tie new game to user's profile
@@ -188,6 +198,35 @@ public class DatabaseHelper {
         session.put("host", true);
 
         db.collection(KEY_USERS).document(MyApplication.currUser.getUid()).collection(KEY_SESSIONS).document(gameTitle).set(session, SetOptions.merge());
+    }
+
+    public static void joinTurnBasedGame(final String gameTitle, final String hostCode) {
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // only join game if game by that code exists
+        db.collection(KEY_GAMES).document(gameTitle).collection(KEY_SESSIONS).document(hostCode).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (!documentSnapshot.exists()) {
+                    return;
+                }
+
+                // save game session info to joinee profile
+                final Map<String, Object> data = new HashMap<>();
+                data.put("code", hostCode);
+                data.put("host", false);
+                db.collection(KEY_USERS).document(MyApplication.currUser.getUid()).collection(KEY_SESSIONS).document(gameTitle).set(data);
+
+                // save joinee uuid && randomly pick who goes first
+                final Map<String, Object> update = new HashMap<>();
+                update.put("joinee", MyApplication.currUser.getUid());
+                update.put("state", (Util.getRandInt(0, 1) == 0)?
+                                TurnBasedMultiplayerGame.STATE.HOST_TURN.name() :
+                                TurnBasedMultiplayerGame.STATE.JOINEE_TURN.name());
+
+                db.collection(KEY_GAMES).document(gameTitle).collection(KEY_SESSIONS).document(hostCode).set(update, SetOptions.merge());
+            }
+        });
     }
 
     public interface OnDatabaseFetchListener {
