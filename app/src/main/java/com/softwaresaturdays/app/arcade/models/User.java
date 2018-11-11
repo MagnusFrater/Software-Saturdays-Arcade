@@ -53,7 +53,13 @@ public class User {
     }
 
     public void checkAndUpdateUserHighScore(String game, double score) {
-        highScores.put(game, score);
+        if (highScores.get(game) != null) {
+            if (score > highScores.get(game)) {
+                highScores.put(game, score);
+            }
+        } else {
+            highScores.put(game, score);
+        }
     }
 
     public HashMap<String, Double> getHighScores() {

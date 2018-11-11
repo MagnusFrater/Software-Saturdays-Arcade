@@ -366,6 +366,9 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
     }
 
     private void gameOver() {
+        // Record the score - Calling superclass method
+        recordScore(mScore, "2048");
+
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle("GAME OVER");
 
@@ -379,8 +382,6 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
 
         alert.setNegativeButton("Back to chat", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                // Record the score - Calling superclass method
-                recordScore(mScore, "2048");
                 startActivity(new Intent(getApplicationContext(), ChatActivity.class));
             }
         });

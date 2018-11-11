@@ -20,7 +20,7 @@ public class GameActivity extends AppCompatActivity {
 
     // All child classes should call this method
     public void recordScore(final double newScore, final String gameTitle) {
-        // check and update user's high mScore for the game
+        // check and update user's high score for the game
         MyApplication.currUser.checkAndUpdateUserHighScore(gameTitle, newScore);
         DatabaseHelper.uploadUserInfo(MyApplication.currUser);
 
@@ -28,6 +28,7 @@ public class GameActivity extends AppCompatActivity {
         // Create a new Score object to upload to the Game's high scores on the database
 
         // Get the latest high scores from the cloud once (NOT LIVE)
+        // Update score if necessary
         DatabaseHelper.getGameHighScores(new DatabaseHelper.onGamesFetchListener() {
             @Override
             public void onGamesFetched(ArrayList<Game> games) {

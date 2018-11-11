@@ -237,14 +237,19 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 mGameAdapter = new GameAdapter(ChatActivity.this, mAllGames, new GameAdapter.OnItemClickListener() {
                     @Override
                     public void onClick(Game game) {
-                        if (mRlGameInfo.getVisibility() == View.GONE || !mSelectedGame.getTitle().equals(game.getTitle())) {
-                            fetchAndShowGameInfo(game);
+                        if (mSelectedGame == null) {
+                            // if previously no game selected
+                            mSelectedGame = game;
+                            showGameInfo(game);
+                        } else if (mRlGameInfo.getVisibility() == View.GONE || !mSelectedGame.getTitle().equals(game.getTitle())) {
+                            // if user selected a game with a new title
+                            showGameInfo(game);
+                            mSelectedGame = game;
                         } else {
+                            // user tapped on the same game again, hide the game info
                             hidGameInfo();
+                            mSelectedGame = game;
                         }
-
-                        // Clicked on Game
-                        mSelectedGame = game;
                     }
                 });
 
@@ -265,14 +270,19 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         mGameAdapter = new GameAdapter(this, mAllGames, new GameAdapter.OnItemClickListener() {
             @Override
             public void onClick(Game game) {
-                if (mRlGameInfo.getVisibility() == View.GONE || !mSelectedGame.getTitle().equals(game.getTitle())) {
-                    fetchAndShowGameInfo(game);
+                if (mSelectedGame == null) {
+                    // if previously no game selected
+                    mSelectedGame = game;
+                    showGameInfo(game);
+                } else if (mRlGameInfo.getVisibility() == View.GONE || !mSelectedGame.getTitle().equals(game.getTitle())) {
+                    // if user selected a game with a new title
+                    showGameInfo(game);
+                    mSelectedGame = game;
                 } else {
+                    // user tapped on the same game again, hide the game info
                     hidGameInfo();
+                    mSelectedGame = game;
                 }
-
-                // Clicked on Game
-                mSelectedGame = game;
             }
         });
 
@@ -284,7 +294,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         mRlGameInfo.setVisibility(View.GONE);
     }
 
-    private void fetchAndShowGameInfo(Game game) {
+    private void showGameInfo(Game game) {
         mRlGameInfo.setVisibility(View.VISIBLE);
         if (MyApplication.currUser.getHighScores() != null && MyApplication.currUser.getHighScores().get(game.getTitle()) != null) {
             mTvUserHighScore.setText("Your high score: " + MyApplication.currUser.getHighScores().get(game.getTitle()));
