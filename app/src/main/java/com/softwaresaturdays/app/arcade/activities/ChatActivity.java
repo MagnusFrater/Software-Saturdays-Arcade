@@ -164,7 +164,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 // Your code to refresh the list here.
                 mSwipeContainer.setRefreshing(false);
                 refreshChatList();
-                refreshGamesList();
             }
         });
 
@@ -217,13 +216,16 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         setupChatList();
 
         setupGamesList();
+
+        automaticRefreshGamesScores();
     }
 
-    private void refreshGamesList() {
-        DatabaseHelper.getGameHighScores(new DatabaseHelper.onGamesFetchListener() {
+    private void automaticRefreshGamesScores() {
+        DatabaseHelper.getLiveGameHighScores(new DatabaseHelper.onGamesFetchListener() {
             @Override
             public void onGamesFetched(ArrayList<Game> games) {
                 // Add all latest game data to mAllGames
+                mAllGames = new ArrayList<>();
                 mAllGames.addAll(games);
 
                 // Add extra games under construction

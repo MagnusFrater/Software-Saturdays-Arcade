@@ -27,41 +27,46 @@ public class GameActivity extends AppCompatActivity {
         // check and update game's high mScore
         // Create a new Score object to upload to the Game's high scores on the database
 
-        // Get the latest high scores from the cloud
+        // Get the latest high scores from the cloud once (NOT LIVE)
         DatabaseHelper.getGameHighScores(new DatabaseHelper.onGamesFetchListener() {
             @Override
             public void onGamesFetched(ArrayList<Game> games) {
                 for (Game latestGame : games) {
-                    if (latestGame.getTitle().equals(gameTitle)) {
+                    try {
+                        if (latestGame.getTitle().equals(gameTitle)) {
 
-                        boolean gameNeedsUpdate = false;
+                            boolean gameNeedsUpdate = false;
 
-                        // Now check if the current score is the highest score
-                        if (latestGame.getTop1() < newScore) {
-                            // If new score is the highest score, top1 becomes top2 and top2 becomes top3
-                            latestGame.setTop3(latestGame.getTop2());
-                            latestGame.setTop2(latestGame.getTop1());
-                            latestGame.setTop1(newScore);
-                            gameNeedsUpdate = true;
-                        } else if (latestGame.getTop2() < newScore) {
-                            // If new score is the second highest score, top3 becomes top2
-                            latestGame.setTop3(latestGame.getTop2());
-                            latestGame.setTop2(newScore);
-                            gameNeedsUpdate = true;
-                        } else if (latestGame.getTop3() < newScore) {
-                            // If new score is the third highest score
-                            latestGame.setTop3(newScore);
-                            gameNeedsUpdate = true;
-                        } else {
-                            // If the new score is not in the top 3 scores
-                            // Do nothing
+                            // Now check if the current score is the highest score
+                            if (latestGame.getTop1() < newScore) {
+                                // If new score is the highest score, top1 becomes top2 and top2 becomes top3
+                                latestGame.setTop3(latestGame.getTop2(), latestGame.getUid2());
+                                latestGame.setTop2(latestGame.getTop1(), latestGame.getUid1());
+                                latestGame.setTop1(newScore, MyApplication.currUser.getUid());
+                                gameNeedsUpdate = true;
+                            } else if (latestGame.getTop2() < newScore) {
+                                // If new score is the second highest score, top3 becomes top2
+                                latestGame.setTop3(latestGame.getTop2(), latestGame.getUid2());
+                                latestGame.setTop2(newScore, MyApplication.currUser.getUid());
+                                gameNeedsUpdate = true;
+                            } else if (latestGame.getTop3() < newScore) {
+                                // If new score is the third highest score
+                                latestGame.setTop3(newScore, MyApplication.currUser.getUid());
+                                gameNeedsUpdate = true;
+                            } else {
+                                // If the new score is not in the top 3 scores
+                                // Do nothing
+                            }
+
+                            // if it is a new high score then update the game high scores on the database as well
+                            if (gameNeedsUpdate) {
+                                DatabaseHelper.updateGameHighScore(latestGame);
+                            }
                         }
-
-                        // if it is a new high score then update the game high scores on the database as well
-                        if (gameNeedsUpdate) {
-                            DatabaseHelper.updateGameHighScore(latestGame);
-                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+
 
                 }
             }

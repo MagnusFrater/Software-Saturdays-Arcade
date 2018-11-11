@@ -1,8 +1,11 @@
 package com.softwaresaturdays.app.arcade.networkHelpers;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -10,6 +13,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.softwaresaturdays.app.arcade.models.Game;
@@ -143,10 +147,40 @@ public class DatabaseHelper {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference docRef = db.collection(KEY_GAMES).document(updatedGame.getTitle());
 
-        docRef.set(updatedGame, SetOptions.merge());
+        docRef.set(updatedGame);
     }
 
     public static void getGameHighScores(final onGamesFetchListener listener) {
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference colRef = db.collection(KEY_GAMES);
+
+        colRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    ArrayList<Game> games = new ArrayList<>();
+
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Log.d(TAG, document.getId() + " => " + document.getData());
+
+                        try {
+                            Game game = document.toObject(Game.class);
+                            if (game != null) {
+                                game.setTitle(document.getId());
+                            }
+                            games.add(game);
+                        } catch (Exception e2) {
+                            e2.printStackTrace();
+                        }
+                    }
+
+                    listener.onGamesFetched(games);
+                }
+            }
+        });
+    }
+
+    public static void getLiveGameHighScores(final onGamesFetchListener listener) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference colRef = db.collection(KEY_GAMES);
 
@@ -160,6 +194,9 @@ public class DatabaseHelper {
                     for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
                         try {
                             Game game = documentSnapshot.toObject(Game.class);
+                            if (game != null) {
+                                game.setTitle(documentSnapshot.getId());
+                            }
                             games.add(game);
                         } catch (Exception e2) {
                             e2.printStackTrace();
@@ -174,6 +211,7 @@ public class DatabaseHelper {
             }
         });
     }
+
 
     public interface onGamesFetchListener {
         void onGamesFetched(ArrayList<Game> games);

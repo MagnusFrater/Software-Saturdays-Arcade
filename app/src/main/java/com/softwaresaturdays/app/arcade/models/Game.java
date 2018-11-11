@@ -51,8 +51,9 @@ public class Game {
         return top1;
     }
 
-    public void setTop1(double top1) {
+    public void setTop1(double top1, String uid1) {
         this.top1 = top1;
+        this.uid1 = uid1;
     }
 
     public String getUid2() {
@@ -67,8 +68,9 @@ public class Game {
         return top2;
     }
 
-    public void setTop2(double top2) {
+    public void setTop2(double top2, String uid2) {
         this.top2 = top2;
+        this.uid2 = uid2;
     }
 
     public String getUid3() {
@@ -83,8 +85,9 @@ public class Game {
         return top3;
     }
 
-    public void setTop3(double top3) {
+    public void setTop3(double top3, String uid3) {
         this.top3 = top3;
+        this.uid3 = uid3;
     }
 
     public String toString() {
