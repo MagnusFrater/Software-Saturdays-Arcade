@@ -21,7 +21,6 @@ public class User {
         this.name = displayName;
         this.photoUrl = photoUrl.toString();
         this.uid = uid;
-        this.highScores = new HashMap<>();
     }
 
     public String getEmail() {
@@ -53,7 +52,10 @@ public class User {
     }
 
     public void checkAndUpdateUserHighScore(String game, double score) {
-        if (highScores.get(game) != null) {
+        if (highScores == null) {
+            highScores = new HashMap<>();
+            highScores.put(game, score);
+        } else if (highScores.get(game) != null) {
             if (score > highScores.get(game)) {
                 highScores.put(game, score);
             }

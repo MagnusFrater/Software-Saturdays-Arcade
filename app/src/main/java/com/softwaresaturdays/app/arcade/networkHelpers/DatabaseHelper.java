@@ -48,10 +48,6 @@ public class DatabaseHelper {
         colRef.document(user.getUid()).set(user, SetOptions.merge());
     }
 
-    public static void uploadUserHighScore() {
-
-    }
-
     public static void uploadMessage(Message message) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference colRef = db.collection(KEY_MESSAGES);
