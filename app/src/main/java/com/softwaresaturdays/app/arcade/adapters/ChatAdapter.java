@@ -68,6 +68,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         final ChatViewHolder chatViewHolder = (ChatViewHolder) viewHolder;
         final Message message = messages.get(position);
 
+        // Check message type and update display accordingly
         if (message.getType().equals(Message.TYPE_TEXT_MESSAGE)) {
             TextMessage textMessage = (TextMessage) message;
             chatViewHolder.tvTextMessage.setText(textMessage.getText());
@@ -76,6 +77,8 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             GifMessage gifMessage = (GifMessage) message;
             chatViewHolder.ivGif.setVisibility(View.VISIBLE);
             chatViewHolder.tvTextMessage.setText(gifMessage.searchText);
+
+            // Adding placeholder loading image while the GIF loads
             RequestOptions requestOptions = new RequestOptions();
             requestOptions.placeholder(R.drawable.progress);
             requestOptions.error(R.drawable.progress);
@@ -86,6 +89,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     .into(chatViewHolder.ivGif);
         }
 
+        // Set extra info about the message's time and author
         User author = Util.getUserData(message.getUserId(), mContext);
         chatViewHolder.tvInfo.setText(author.getName() + "  |  " + Util.getFormattedTime((double) message.getTimestamp()));
         chatViewHolder.tvInfo.setVisibility(View.GONE);
@@ -95,6 +99,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             public void onClick(View v) {
                 onItemClickListener.onClick(message);
 
+                // Toggle visibility of the extra info
                 if (chatViewHolder.tvInfo.getVisibility() == View.GONE) {
                     chatViewHolder.tvInfo.setVisibility(View.VISIBLE);
                 } else {
@@ -103,6 +108,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
         });
 
+        // long click interface call
         chatViewHolder.cvMessage.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {

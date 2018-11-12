@@ -25,6 +25,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.softwaresaturdays.app.arcade.MyApplication;
@@ -37,6 +38,7 @@ import com.softwaresaturdays.app.arcade.models.Game;
 import com.softwaresaturdays.app.arcade.models.GifMessage;
 import com.softwaresaturdays.app.arcade.models.Message;
 import com.softwaresaturdays.app.arcade.models.TextMessage;
+import com.softwaresaturdays.app.arcade.models.User;
 import com.softwaresaturdays.app.arcade.networkHelpers.DatabaseHelper;
 import com.softwaresaturdays.app.arcade.networkHelpers.NetworkHelper;
 import com.softwaresaturdays.app.arcade.utilities.Util;
@@ -220,6 +222,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         automaticRefreshGamesScores();
     }
 
+    // Fetches all game info and update game list
     private void automaticRefreshGamesScores() {
         DatabaseHelper.getLiveGameHighScores(new DatabaseHelper.onGamesFetchListener() {
             @Override
@@ -260,6 +263,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
+    // Sets up the intial list
     private void setupGamesList() {
         mAllGames.add(new Game("2048"));
         mAllGames.add(new Game("TicTacToe"));
@@ -299,7 +303,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         if (MyApplication.currUser.getHighScores() != null && MyApplication.currUser.getHighScores().get(game.getTitle()) != null) {
             mTvUserHighScore.setText("Your high score: " + MyApplication.currUser.getHighScores().get(game.getTitle()));
         } else {
-            mTvUserHighScore.setText("Your high score: UNAVAILABLE");
+            mTvUserHighScore.setText("Your high score: 0.0");
         }
 
         TextView tvTop1 = findViewById(R.id.tvTop1);
@@ -309,6 +313,23 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         tvTop1.setText(game.getTop1() + "");
         tvTop2.setText(game.getTop2() + "");
         tvTop3.setText(game.getTop3() + "");
+
+        RoundedImageView ivProfile1 = findViewById(R.id.ivProfile1);
+        RoundedImageView ivProfile2 = findViewById(R.id.ivProfile2);
+        RoundedImageView ivProfile3 = findViewById(R.id.ivProfile3);
+
+        User user1 = Util.getUserData(game.getUid1(), this);
+        User user2 = Util.getUserData(game.getUid2(), this);
+        User user3 = Util.getUserData(game.getUid3(), this);
+
+        // Adding placeholder loading image while the GIF loads
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions.placeholder(R.drawable.ic_account_circle_black_36dp);
+
+        // Load profile pic using Glide
+        Glide.with(this).setDefaultRequestOptions(requestOptions).load(user1.getPhotoUrl()).into(ivProfile1);
+        Glide.with(this).setDefaultRequestOptions(requestOptions).load(user2.getPhotoUrl()).into(ivProfile2);
+        Glide.with(this).setDefaultRequestOptions(requestOptions).load(user3.getPhotoUrl()).into(ivProfile3);
     }
 
     private void setupChatList() {
@@ -343,6 +364,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         int id = v.getId();
         switch (id) {
             case R.id.cvPlayButton:
+                // When game play button is pressed, start the appropriate Game activity
                 if (mSelectedGame != null) {
                     switch (mSelectedGame.getTitle()) {
                         case "2048":
@@ -357,6 +379,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.ivSend:
+                // When send message button is pressed, check for search text
                 String text = mEtTextMessage.getText().toString();
                 if (text.isEmpty()) {
                     Snackbar.make(mRvChat, "Please enter searchText", Snackbar.LENGTH_SHORT).show();
@@ -373,6 +396,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 mEtTextMessage.setText("");
                 break;
             case R.id.etTextMessage:
+                // When user clicks on edittext, the list is scrolled to end so user can see the last entered message
                 new CountDownTimer(200, 200) {
                     public void onFinish() {
                         // When timer is finished
@@ -384,6 +408,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 }.start();
                 break;
             case R.id.ivProfile:
+                // When user clicks on profile pic button, it either gives user the option menu or let's the user send a gif
                 if (mIsGifButton) {
                     final String gifSearchText = mEtTextMessage.getText().toString();
                     NetworkHelper.fetchGIF(gifSearchText, ChatActivity.this, new NetworkHelper.OnFetchSuccessListener() {

@@ -45,7 +45,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/colorPrimary"
-                    android:visibility="gone">
+                    android:visibility="visible">
 
                     <LinearLayout
                         android:id="@+id/llLeaderboard"
@@ -61,12 +61,25 @@
                             android:layout_marginRight="16dp"
                             android:orientation="vertical">
 
+                            <com.makeramen.roundedimageview.RoundedImageView
+                                android:id="@+id/ivProfile1"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:layout_gravity="center"
+                                android:foreground="?attr/selectableItemBackground"
+                                android:scaleType="fitCenter"
+                                app:riv_corner_radius="18dip"
+                                app:riv_mutate_background="true"
+                                app:riv_oval="true"
+                                app:riv_tile_mode="repeat" />
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:fontFamily="sans-serif-medium"
-                                android:text="RANK 1" />
+                                android:text="RANK 1"
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:id="@+id/tvTop1"
@@ -85,12 +98,25 @@
                             android:layout_marginRight="16dp"
                             android:orientation="vertical">
 
+                            <com.makeramen.roundedimageview.RoundedImageView
+                                android:id="@+id/ivProfile2"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:layout_gravity="center"
+                                android:foreground="?attr/selectableItemBackground"
+                                android:scaleType="fitCenter"
+                                app:riv_corner_radius="18dip"
+                                app:riv_mutate_background="true"
+                                app:riv_oval="true"
+                                app:riv_tile_mode="repeat" />
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:fontFamily="sans-serif-medium"
-                                android:text="RANK 2" />
+                                android:text="RANK 2"
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:id="@+id/tvTop2"
@@ -107,12 +133,25 @@
                             android:layout_height="wrap_content"
                             android:orientation="vertical">
 
+                            <com.makeramen.roundedimageview.RoundedImageView
+                                android:id="@+id/ivProfile3"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:layout_gravity="center"
+                                android:foreground="?attr/selectableItemBackground"
+                                android:scaleType="fitCenter"
+                                app:riv_corner_radius="18dip"
+                                app:riv_mutate_background="true"
+                                app:riv_oval="true"
+                                app:riv_tile_mode="repeat" />
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:fontFamily="sans-serif-medium"
-                                android:text="RANK 3" />
+                                android:text="RANK 3"
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:id="@+id/tvTop3"

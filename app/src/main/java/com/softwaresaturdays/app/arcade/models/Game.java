@@ -3,6 +3,7 @@ package com.softwaresaturdays.app.arcade.models;
 public class Game {
     private String title;
 
+    // All scores need the value and a user id
     private String uid1;
     private double top1;
 
