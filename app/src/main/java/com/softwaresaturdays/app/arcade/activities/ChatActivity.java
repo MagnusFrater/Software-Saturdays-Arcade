@@ -38,6 +38,7 @@ import com.softwaresaturdays.app.arcade.models.Game;
 import com.softwaresaturdays.app.arcade.models.GifMessage;
 import com.softwaresaturdays.app.arcade.models.Message;
 import com.softwaresaturdays.app.arcade.models.TextMessage;
+import com.softwaresaturdays.app.arcade.models.TurnBasedMultiplayerGame;
 import com.softwaresaturdays.app.arcade.models.User;
 import com.softwaresaturdays.app.arcade.networkHelpers.DatabaseHelper;
 import com.softwaresaturdays.app.arcade.networkHelpers.NetworkHelper;
@@ -266,7 +267,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     // Sets up the intial list
     private void setupGamesList() {
         mAllGames.add(new Game("2048"));
-        mAllGames.add(new Game("TicTacToe"));
+        mAllGames.add(new TurnBasedMultiplayerGame("Tic Tac Toe"));
         mAllGames.add(new Game("Pac Man"));
         mAllGames.add(new Game("Hang Man"));
         mAllGames.add(new Game("Flappy Bird"));
@@ -370,7 +371,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         case "2048":
                             startActivity(new Intent(getApplicationContext(), TwentyFortyEight.class));
                             break;
-                        case "TicTacToe":
+                        case "Tic Tac Toe":
                             startActivity(new Intent(getApplicationContext(), TicTacToe.class));
                             break;
                         default:

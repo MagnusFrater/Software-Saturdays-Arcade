@@ -13,29 +13,13 @@ public class Game {
     private String uid3;
     private double top3;
 
+    public Game() {
+        this("");
+    }
+
     public Game(String title) {
         this.title = title;
     }
-
-    public Game() {
-
-    }
-
-//    public Game(String hashcode) {
-//        String[] items = hashcode.split(",");
-//
-//        try {
-//            this.title = items[0];
-//            this.uid1 = items[1];
-//            this.top1 = Double.parseDouble(items[2]);
-//            this.uid2 = items[3];
-//            this.top2 = Double.parseDouble(items[4]);
-//            this.uid3 = items[5];
-//            this.top3 = Double.parseDouble(items[6]);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     public String getTitle() {
         return title;
@@ -95,8 +79,4 @@ public class Game {
         this.top3 = top3;
         this.uid3 = uid3;
     }
-
-//    public String toString() {
-//        return title + "," + uid1 + "," + top1 + "," + uid2 + "," + top2 + "," + uid3 + "," + top3;
-//    }
 }
