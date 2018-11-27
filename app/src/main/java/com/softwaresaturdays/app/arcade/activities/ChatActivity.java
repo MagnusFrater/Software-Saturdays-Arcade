@@ -30,6 +30,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.softwaresaturdays.app.arcade.MyApplication;
 import com.softwaresaturdays.app.arcade.R;
+import com.softwaresaturdays.app.arcade.activities.games.HostJoinActivity;
 import com.softwaresaturdays.app.arcade.activities.games.TicTacToe;
 import com.softwaresaturdays.app.arcade.activities.games.TwentyFortyEight;
 import com.softwaresaturdays.app.arcade.adapters.ChatAdapter;
@@ -372,7 +373,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                             startActivity(new Intent(getApplicationContext(), TwentyFortyEight.class));
                             break;
                         case "Tic Tac Toe":
-                            startActivity(new Intent(getApplicationContext(), TicTacToe.class));
+                            final Intent intent = new Intent(getApplicationContext(), HostJoinActivity.class);
+                            intent.putExtra("gameTitle", mSelectedGame.getTitle());
+                            intent.putExtra("gameClass", TicTacToe.class);
+                            startActivity(intent);
                             break;
                         default:
                             Snackbar.make(mRvChat, mSelectedGame.getTitle() + " is Under construction", Snackbar.LENGTH_SHORT).show();

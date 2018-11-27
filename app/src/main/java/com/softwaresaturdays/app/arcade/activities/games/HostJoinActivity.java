@@ -41,8 +41,8 @@ public class HostJoinActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_host_join);
 
-        gameTitle = getIntent().getStringExtra("game_title");
-        gameClass = (Class) getIntent().getSerializableExtra("game_class");
+        gameTitle = getIntent().getStringExtra("gameTitle");
+        gameClass = (Class) getIntent().getSerializableExtra("gameClass");
 
         // set game title && host code UI
         ((TextView) findViewById(R.id.tvGameNameLabel)).setText(gameTitle);

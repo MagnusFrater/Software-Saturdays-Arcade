@@ -67,11 +67,8 @@ public class GameActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-
-
                 }
             }
         });
-
     }
 }

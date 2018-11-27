@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
@@ -31,7 +32,6 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-
 public class DatabaseHelper {
 
     public static final String KEY_USERS = "users";
@@ -58,7 +58,6 @@ public class DatabaseHelper {
     public static void fetchMessages(int limit, final OnDatabaseFetchListener listener) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference colRef = db.collection(KEY_MESSAGES);
-
 
         colRef.orderBy("timestamp", Query.Direction.DESCENDING).limit(limit).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -224,7 +223,6 @@ public class DatabaseHelper {
         });
     }
 
-
     public interface onGamesFetchListener {
         void onGamesFetched(ArrayList<Game> games);
     }
@@ -252,6 +250,11 @@ public class DatabaseHelper {
                     }
                 });
             }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                createTurnBasedGameSession(gameTitle, hostCode);
+            }
         });
     }
 
@@ -264,12 +267,12 @@ public class DatabaseHelper {
         data.put("host", MyApplication.currUser.getUid());
         db.collection(KEY_GAMES).document(gameTitle).collection(KEY_SESSIONS).document(hostCode).set(data);
 
-        // tie new game to user's profile
+        // tie new game session to user's profile
         final Map<String, Object> session = new HashMap<>();
         session.put("code", hostCode);
         session.put("host", true);
 
-        db.collection(KEY_USERS).document(MyApplication.currUser.getUid()).collection(KEY_SESSIONS).document(gameTitle).set(session, SetOptions.merge());
+        db.collection(KEY_USERS).document(MyApplication.currUser.getUid()).collection(KEY_SESSIONS).document(gameTitle).set(session);
     }
 
     public static void joinTurnBasedGame(final String gameTitle, final String hostCode) {
@@ -283,18 +286,18 @@ public class DatabaseHelper {
                     return;
                 }
 
-                // save game session info to joinee profile
-                final Map<String, Object> data = new HashMap<>();
-                data.put("code", hostCode);
-                data.put("host", false);
-                db.collection(KEY_USERS).document(MyApplication.currUser.getUid()).collection(KEY_SESSIONS).document(gameTitle).set(data);
+                // save game session info to joiner profile
+                final Map<String, Object> session = new HashMap<>();
+                session.put("code", hostCode);
+                session.put("host", false);
+                db.collection(KEY_USERS).document(MyApplication.currUser.getUid()).collection(KEY_SESSIONS).document(gameTitle).set(session);
 
-                // save joinee uuid && randomly pick who goes first
+                // save joiner uuid && randomly pick who goes first
                 final Map<String, Object> update = new HashMap<>();
-                update.put("joinee", MyApplication.currUser.getUid());
+                update.put("joiner", MyApplication.currUser.getUid());
                 update.put("state", (Util.getRandInt(0, 1) == 0) ?
                         TurnBasedMultiplayerGame.STATE.HOST_TURN.name() :
-                        TurnBasedMultiplayerGame.STATE.JOINEE_TURN.name());
+                        TurnBasedMultiplayerGame.STATE.JOINER_TURN.name());
 
                 db.collection(KEY_GAMES).document(gameTitle).collection(KEY_SESSIONS).document(hostCode).set(update, SetOptions.merge());
             }

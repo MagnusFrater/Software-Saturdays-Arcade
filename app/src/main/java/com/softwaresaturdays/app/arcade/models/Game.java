@@ -1,17 +1,20 @@
 package com.softwaresaturdays.app.arcade.models;
 
+import android.content.Context;
+import android.content.Intent;
+
 public class Game {
-    private String title;
+    protected String title;
 
     // All scores need the value and a user id
-    private String uid1;
-    private double top1;
+    protected String uid1;
+    protected double top1;
 
-    private String uid2;
-    private double top2;
+    protected String uid2;
+    protected double top2;
 
-    private String uid3;
-    private double top3;
+    protected String uid3;
+    protected double top3;
 
     public Game() {
         this("");
