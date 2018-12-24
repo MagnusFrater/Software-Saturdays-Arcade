@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +27,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.softwaresaturdays.app.arcade.MyApplication;
@@ -115,7 +119,16 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     // Subscribe to the topic "arcade", all notifications are sent users subscribed to the topic "arcade"
     private void subscribeToNotifications() {
-        FirebaseMessaging.getInstance().subscribeToTopic("arcade");
+        FirebaseMessaging.getInstance().subscribeToTopic("arcade").addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (!task.isSuccessful()) {
+                    Log.d("TOPICS:", "UNSUCCESSFUL SUBSCRIPTION");
+                } else {
+                    Log.d("TOPICS:", "SUCCESSFUL SUBSCRIPTION");
+                }
+            }
+        });
     }
 
     private void unsubscribeToNotifications() {
@@ -463,6 +476,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 if (mSelectedMessage != null) {
                     DatabaseHelper.deleteMessage(mSelectedMessage);
                 }
+                break;
+            case R.id.signOut:
+                FirebaseAuth.getInstance().signOut();
+                finish();
+                startActivity(new Intent(ChatActivity.this, LoginActivity.class));
+                break;
         }
         return false;
     }
