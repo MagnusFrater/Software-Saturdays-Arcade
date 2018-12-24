@@ -275,20 +275,23 @@ public class DatabaseHelper {
         db.collection(KEY_USERS).document(MyApplication.currUser.getUid()).collection(KEY_SESSIONS).document(gameTitle).set(session);
     }
 
-    public static void joinTurnBasedGame(final String gameTitle, final String hostCode) {
+    public static void joinTurnBasedGame(final String gameTitle, final String hostCodeToJoin, final String hostCodeToDelete) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // only join game if game by that code exists
-        db.collection(KEY_GAMES).document(gameTitle).collection(KEY_SESSIONS).document(hostCode).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        db.collection(KEY_GAMES).document(gameTitle).collection(KEY_SESSIONS).document(hostCodeToJoin).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (!documentSnapshot.exists()) {
                     return;
                 }
 
+                // delete unused game session
+                db.collection(KEY_GAMES).document(gameTitle).collection(KEY_SESSIONS).document(hostCodeToDelete).delete();
+
                 // save game session info to joiner profile
                 final Map<String, Object> session = new HashMap<>();
-                session.put("code", hostCode);
+                session.put("code", hostCodeToJoin);
                 session.put("host", false);
                 db.collection(KEY_USERS).document(MyApplication.currUser.getUid()).collection(KEY_SESSIONS).document(gameTitle).set(session);
 
@@ -299,7 +302,7 @@ public class DatabaseHelper {
                         TurnBasedMultiplayerGame.STATE.HOST_TURN.name() :
                         TurnBasedMultiplayerGame.STATE.JOINER_TURN.name());
 
-                db.collection(KEY_GAMES).document(gameTitle).collection(KEY_SESSIONS).document(hostCode).set(update, SetOptions.merge());
+                db.collection(KEY_GAMES).document(gameTitle).collection(KEY_SESSIONS).document(hostCodeToJoin).set(update, SetOptions.merge());
             }
         });
     }

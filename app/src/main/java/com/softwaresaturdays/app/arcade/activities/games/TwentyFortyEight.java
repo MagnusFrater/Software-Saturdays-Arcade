@@ -383,6 +383,7 @@ public class TwentyFortyEight extends GameActivity implements View.OnTouchListen
         alert.setNegativeButton("Back to chat", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 startActivity(new Intent(getApplicationContext(), ChatActivity.class));
+                finish();
             }
         });
 

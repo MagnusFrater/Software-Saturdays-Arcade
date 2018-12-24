@@ -96,7 +96,10 @@ public class HostJoinActivity extends AppCompatActivity {
                 }
 
                 if (!documentSnapshot.get("state").equals(TurnBasedMultiplayerGame.STATE.INIT.name())) {
-                    startActivity(new Intent(getApplicationContext(), gameClass));
+                    final Intent intent = new Intent(getApplicationContext(), gameClass);
+                    intent.putExtra("hostCode", hostCode);
+                    startActivity(intent);
+                    finish();
                 }
             }
         });
@@ -139,8 +142,10 @@ public class HostJoinActivity extends AppCompatActivity {
 
                         final String gameState = documentSnapshot.getString("state");
                         if (!gameState.equals(TurnBasedMultiplayerGame.STATE.INIT.name())) {
-                            Log.e("profile", documentSnapshot.get("code") + " " + hostCode);
-                            startActivity(new Intent(getApplicationContext(), gameClass));
+                            final Intent intent = new Intent(getApplicationContext(), gameClass);
+                            intent.putExtra("hostCode", hostCode);
+                            startActivity(intent);
+                            finish();
                         }
                     }
                 });
@@ -160,6 +165,6 @@ public class HostJoinActivity extends AppCompatActivity {
             return;
         }
 
-        DatabaseHelper.joinTurnBasedGame(gameTitle, gameCode);
+        DatabaseHelper.joinTurnBasedGame(gameTitle, gameCode, hostCode);
     }
 }
