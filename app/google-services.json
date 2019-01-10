@@ -23,6 +23,22 @@
           }
         },
         {
+          "client_id": "29323717902-cesdv33pk59raoi9n2r03v3na7cj5oka.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.softwaresaturdays.app.arcade",
+            "certificate_hash": "776f972e37d89a20769c6e42f748953fa44a6669"
+          }
+        },
+        {
+          "client_id": "29323717902-6gan13kr8cmrk46fc2pqkmj40o35lr25.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.softwaresaturdays.app.arcade",
+            "certificate_hash": "b1ebffeed07666bb146a2c9d1d2f84e31922bc3a"
+          }
+        },
+        {
           "client_id": "29323717902-ja0lnf82mmg2oljjba6f8tuimbfo660s.apps.googleusercontent.com",
           "client_type": 3
         }
