@@ -131,7 +131,7 @@ public class DatabaseHelper {
                             users.add(user);
 
                             // Update self user data - also contains user's high scores for games
-                            if (user.getUid().equals(MyApplication.currUser.getUid())) {
+                            if (user != null && user.getUid().equals(MyApplication.currUser.getUid())) {
                                 MyApplication.currUser = user;
                             }
                         } catch (Exception e2) {
