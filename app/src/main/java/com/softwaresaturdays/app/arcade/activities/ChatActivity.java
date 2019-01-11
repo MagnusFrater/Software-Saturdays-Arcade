@@ -34,8 +34,6 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.softwaresaturdays.app.arcade.MyApplication;
 import com.softwaresaturdays.app.arcade.R;
-import com.softwaresaturdays.app.arcade.activities.games.HostJoinActivity;
-import com.softwaresaturdays.app.arcade.activities.games.TicTacToe;
 import com.softwaresaturdays.app.arcade.activities.games.TwentyFortyEight;
 import com.softwaresaturdays.app.arcade.adapters.ChatAdapter;
 import com.softwaresaturdays.app.arcade.adapters.GameAdapter;
@@ -43,7 +41,6 @@ import com.softwaresaturdays.app.arcade.models.Game;
 import com.softwaresaturdays.app.arcade.models.GifMessage;
 import com.softwaresaturdays.app.arcade.models.Message;
 import com.softwaresaturdays.app.arcade.models.TextMessage;
-import com.softwaresaturdays.app.arcade.models.TurnBasedMultiplayerGame;
 import com.softwaresaturdays.app.arcade.models.User;
 import com.softwaresaturdays.app.arcade.networkHelpers.DatabaseHelper;
 import com.softwaresaturdays.app.arcade.networkHelpers.NetworkHelper;
@@ -281,7 +278,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     // Sets up the intial list
     private void setupGamesList() {
         mAllGames.add(new Game("2048"));
-        mAllGames.add(new TurnBasedMultiplayerGame("Tic Tac Toe"));
+        mAllGames.add(new Game("Tic Tac Toe"));
         mAllGames.add(new Game("Pac Man"));
         mAllGames.add(new Game("Hang Man"));
         mAllGames.add(new Game("Flappy Bird"));
@@ -384,12 +381,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     switch (mSelectedGame.getTitle()) {
                         case "2048":
                             startActivity(new Intent(getApplicationContext(), TwentyFortyEight.class));
-                            break;
-                        case "Tic Tac Toe":
-                            final Intent intent = new Intent(getApplicationContext(), HostJoinActivity.class);
-                            intent.putExtra("gameTitle", mSelectedGame.getTitle());
-                            intent.putExtra("gameClass", TicTacToe.class);
-                            startActivity(intent);
                             break;
                         default:
                             Snackbar.make(mRvChat, mSelectedGame.getTitle() + " is Under construction", Snackbar.LENGTH_SHORT).show();

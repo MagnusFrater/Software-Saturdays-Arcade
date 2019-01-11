@@ -46,8 +46,6 @@
 
         <activity android:name=".activities.GameActivity" />
         <activity android:name=".activities.games.TwentyFortyEight" />
-        <activity android:name=".activities.games.TicTacToe" />
-        <activity android:name=".activities.games.HostJoinActivity"></activity>
     </application>
 
 </manifest>
