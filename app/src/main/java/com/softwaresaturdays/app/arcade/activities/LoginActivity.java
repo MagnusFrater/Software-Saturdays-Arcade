@@ -77,7 +77,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        if (account == null) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (account == null || account.isExpired() || user == null) {
             mSignIn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -86,7 +87,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
         } else {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             MyApplication.currUser = new User(user.getEmail(), user.getDisplayName(), user.getPhotoUrl(), user.getUid());
 
             // User already signed in, go to chat activity

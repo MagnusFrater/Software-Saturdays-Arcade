@@ -470,7 +470,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.signOut:
                 FirebaseAuth.getInstance().signOut();
-                finish();
+                // finish();
                 startActivity(new Intent(ChatActivity.this, LoginActivity.class));
                 break;
         }
