@@ -38,7 +38,6 @@ public class LoginActivity extends AppCompatActivity {
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +78,7 @@ public class LoginActivity extends AppCompatActivity {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (account == null || account.isExpired() || user == null) {
+            mGoogleSignInClient.signOut();
             mSignIn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
