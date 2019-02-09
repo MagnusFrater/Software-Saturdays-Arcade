@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/arcade"
+    android:background="@drawable/pacmanbackground"
     tools:context=".activities.LoginActivity">
 
     <TextView
@@ -12,6 +12,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="140dp"
         android:fontFamily="sans-serif-thin"
+        android:textStyle="bold"
         android:text="ARCADE"
         android:textColor="@color/colorWhite"
         android:textSize="56dp" />
